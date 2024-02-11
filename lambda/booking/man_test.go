@@ -16,6 +16,8 @@ func TestHandleRequest(t *testing.T) {
 		TripUntil:    time.RFC3339,
 		HotelName:    "mockHotel",
 		HotelId:      uuid.New().String(),
+		FlightId:     uuid.New().String(),
+		AirlineName:  "cheap-airline",
 		BookingState: "PAYMENT_PENDING",
 	}
 	var bookingId = event.BookingId

@@ -1,6 +1,6 @@
 module github.com/grantlerduck/go-was-lambda-dyanmo
 
-go 1.20
+go 1.21
 
 require (
 	github.com/aws/aws-cdk-go/awscdk/v2 v2.127.0
