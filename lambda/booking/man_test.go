@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"github.com/google/uuid"
-	"github.com/grantlerduck/go-was-lambda-dyanmo/lib/booking"
+	"github.com/grantlerduck/go-was-lambda-dyanmo/lib/domain/booking"
 	"testing"
 	"time"
 )

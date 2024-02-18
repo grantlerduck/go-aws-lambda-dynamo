@@ -4,18 +4,45 @@ import (
 	"context"
 	"fmt"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/grantlerduck/go-was-lambda-dyanmo/lib/booking"
+	"github.com/grantlerduck/go-was-lambda-dyanmo/lib/adapter/dynamo"
+	"github.com/grantlerduck/go-was-lambda-dyanmo/lib/app"
+	"github.com/grantlerduck/go-was-lambda-dyanmo/lib/domain/booking"
+	"go.uber.org/zap"
+	"log"
 )
 
-func HandleRequest(ctx context.Context, event *booking.Event) (*string, error) {
+var logger *zap.Logger
+
+func init() {
+	var err error
+	logger, err = zap.NewProduction()
+	if err != nil {
+		log.Fatalf("can't initialize zap logger: %v", err)
+	}
+	defer logger.Sync()
+}
+
+type BookingHandler struct {
+	service booking.Service
+	logger  *zap.Logger
+}
+
+func (handler *BookingHandler) HandleRequest(ctx context.Context, event *booking.Event) (*string, error) {
 	if event == nil {
 		return nil, fmt.Errorf("received nil event")
 	}
-	message := fmt.Sprintf("Received booking event %s!", event.BookingId)
-	println(message)
-	return &event.BookingId, nil
+	handler.logger.Info("Received booking event", zap.Any("eventId", event.BookingId))
+	ev, err := handler.service.Process(event)
+	if err != nil {
+		return nil, fmt.Errorf("failed to process booing event")
+	}
+	return &ev.BookingId, nil
 }
 
 func main() {
-	lambda.Start(HandleRequest)
+	env := app.NewBookingEnv()
+	repo := dynamo.NewEventRepository(env.Region, env.TableName, logger)
+	service := booking.NewBookingService(repo, logger)
+	handler := &BookingHandler{service: service, logger: logger}
+	lambda.Start(handler.HandleRequest)
 }
