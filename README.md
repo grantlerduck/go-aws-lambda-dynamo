@@ -3,8 +3,10 @@
 AWS Lambda functions using Go, DynamoDB and Kinesis
 
 ## Setup
-* Install go modules
-* Install gotestsum `go install gotest.tools/gotestsum@latest` (fo test reports in CI tools, )
+* Install go modules required for local development
+* Install gotestsum `go install gotest.tools/gotestsum@latest` (foe test reports in CI tools)
+* Install or update ginkgo `go install github.com/onsi/ginkgo/v2/ginkgo`
+* Install or update vuln checker `go install golang.org/x/vuln/cmd/govulncheck@latest`
 
 ## Testing
 
@@ -22,6 +24,34 @@ gotestsum --junitfile unit-tests.xml -- -coverprofile=cover.out ./... go tool co
 run linter
 ````bash
 golangci-lint run ./...
+````
+
+### Use ginkgo to bootstrap test suites
+
+make sure you have ginkgo installed, if not install as follows: 
+```bash
+go install github.com/onsi/ginkgo/v2/ginkgo
+```
+
+to bootstrap a new test suite in a module run 
+```bash
+cd path/to/dir
+ginkgo bootstrap
+```
+
+Checkout ginkgo [documentation](https://onsi.github.io/ginkgo/) for more details.
+
+## Vulnerability Checks
+
+install vulnerability checker 
+```bash 
+go install golang.org/x/vuln/cmd/govulncheck@latest
+```
+
+run vulnerability check
+
+````bash 
+govulncheck ./...
 ````
 
 ## Useful commands
