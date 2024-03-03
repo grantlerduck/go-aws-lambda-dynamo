@@ -22,3 +22,11 @@ go.work
 
 # intellij
 .idea
+
+!go.sum
+
+# CDK asset staging directory
+.cdk.staging
+cdk.out
+/unit-tests.xml
+/coverage.html
