@@ -19,7 +19,9 @@ func init() {
 	if err != nil {
 		log.Fatalf("can't initialize zap logger: %v", err)
 	}
-	defer logger.Sync()
+	defer func() {
+		_ = logger.Sync()
+	}()
 }
 
 type FailedToProcessError struct {
@@ -33,7 +35,7 @@ func (e *FailedToProcessError) Error() string {
 type EventNilError struct{}
 
 func (e *EventNilError) Error() string {
-	return fmt.Sprintf("event is nil")
+	return "event is nil"
 }
 
 type BookingHandler struct {
