@@ -16,7 +16,7 @@ type EvenProcessor struct {
 func (ep *EvenProcessor) Process(event *Event) (*Event, error) {
 	result, err := ep.repo.Insert(event)
 	if err != nil {
-		ep.logger.Error("Failed to process event",
+		ep.logger.Error("failed to process event",
 			zap.Any("item", event),
 			zap.Error(err),
 		)
