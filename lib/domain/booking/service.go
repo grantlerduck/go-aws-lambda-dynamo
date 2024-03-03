@@ -8,12 +8,12 @@ type Service interface {
 	Process(event *Event) (*Event, error)
 }
 
-type EvenProcessor struct {
+type EventProcessor struct {
 	repo   Repository
 	logger *zap.Logger
 }
 
-func (ep *EvenProcessor) Process(event *Event) (*Event, error) {
+func (ep *EventProcessor) Process(event *Event) (*Event, error) {
 	result, err := ep.repo.Insert(event)
 	if err != nil {
 		ep.logger.Error("failed to process event",
@@ -25,6 +25,6 @@ func (ep *EvenProcessor) Process(event *Event) (*Event, error) {
 	return result, nil
 }
 
-func NewBookingService(repository Repository, logger *zap.Logger) *EvenProcessor {
-	return &EvenProcessor{repo: repository, logger: logger}
+func NewBookingService(repository Repository, logger *zap.Logger) *EventProcessor {
+	return &EventProcessor{repo: repository, logger: logger}
 }
