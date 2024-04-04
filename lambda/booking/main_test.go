@@ -22,7 +22,7 @@ var _ = Describe("Main handler function", func() {
 			HotelId:      uuid.New().String(),
 			FlightId:     uuid.New().String(),
 			AirlineName:  "cheap-airline",
-			BookingState: "PAYMENT_PENDING",
+			BookingState: "booking-fee-pending",
 		}
 		expectedBookingId := event.BookingId
 		When("no error in processor", func() {

@@ -35,6 +35,7 @@ var states = map[State]struct{}{
 	Canceled:        {},
 	CheckedIn:       {},
 	CheckedOut:      {},
+	ReviewPending:   {},
 	Reviewed:        {},
 	Unknown:         {},
 }
