@@ -3,52 +3,19 @@ package dynamo
 import (
 	"github.com/google/uuid"
 	"github.com/grantlerduck/go-was-lambda-dyanmo/lib/domain/booking"
-	"strings"
 )
-
-type State string
 
 const (
-	Unconfirmed     State = "booking-unconfirmed"
-	Confirmed       State = "booking-confirmed"
-	PaymentReceived State = "booking-fee-payed"
-	PaymentPending  State = "booking-fee-pending"
-	Planned         State = "booking-planned"
-	Canceled        State = "booking-canceled"
-	CheckedIn       State = "checked-in"
-	CheckedOut      State = "checked-out"
-	ReviewPending   State = "review-pending"
-	Reviewed        State = "customer-reviewed"
-	Unknown         State = "unknown"
+	itemHasKeyAttribute  string = "pk"
+	itemSortKeyAttribute string = "sk"
+	itemGsi1KeyAttribute string = "gsi1_pk"
+	itemGsi1IndexName    string = "GSI1"
 )
 
-func (s State) String() string {
-	return string(s)
-}
-
-var states = map[State]struct{}{
-	Unconfirmed:     {},
-	Confirmed:       {},
-	PaymentReceived: {},
-	PaymentPending:  {},
-	Planned:         {},
-	Canceled:        {},
-	CheckedIn:       {},
-	CheckedOut:      {},
-	Reviewed:        {},
-	Unknown:         {},
-}
-
-func getState(str string) State {
-	state := State(strings.ToLower(str))
-	_, ok := states[state]
-	if !ok {
-		return Unknown
-	}
-	return state
-}
-
 type Item struct {
+	Pk          string `json:"pk" dynamodbav:"pk"`
+	Sk          string `json:"sk" dynamodbav:"sk"`
+	Gsi1Pk      string `json:"gsi1_pk" dynamodbav:"gsi1_pk"`
 	EventId     string `json:"event_id" dynamodbav:"event_id"`
 	BookingId   string `json:"booking_id" dynamodbav:"booking_id"`
 	UserId      string `json:"user_id" dynamodbav:"user_id"`
@@ -61,9 +28,12 @@ type Item struct {
 	State       State  `json:"state" dynamodbav:"state"`
 }
 
-func FromDomainBooking(domain *booking.Event) *Item {
-	item := new(Item)
-	item.EventId = uuid.New().String()
+func (item *Item) fromDomainBooking(domain *booking.Event) *Item {
+	evId := uuid.New().String()
+	item.Pk = evId
+	item.Sk = domain.BookingId
+	item.Gsi1Pk = domain.BookingId
+	item.EventId = evId
 	item.BookingId = domain.BookingId
 	item.UserId = domain.UserId
 	item.TripFrom = domain.TripFrom
@@ -74,4 +44,18 @@ func FromDomainBooking(domain *booking.Event) *Item {
 	item.AirlineName = domain.AirlineName
 	item.State = getState(domain.BookingState)
 	return item
+}
+
+func (item *Item) toBookingDomain() *booking.Event {
+	event := new(booking.Event)
+	event.BookingId = item.BookingId
+	event.UserId = item.UserId
+	event.TripFrom = item.TripFrom
+	event.TripUntil = item.TripUntil
+	event.HotelName = item.HotelName
+	event.HotelId = item.HotelId
+	event.FlightId = item.FlightId
+	event.AirlineName = item.AirlineName
+	event.BookingState = item.State.String()
+	return event
 }
