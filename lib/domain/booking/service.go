@@ -17,7 +17,8 @@ func (ep *EventProcessor) Process(event *Event) (*Event, error) {
 	result, err := ep.repo.Insert(event)
 	if err != nil {
 		ep.logger.Error("failed to process event",
-			zap.Any("item", event),
+			zap.String("bookingId", event.BookingId),
+			zap.String("state", event.BookingState),
 			zap.Error(err),
 		)
 		return nil, err
