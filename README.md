@@ -7,6 +7,15 @@ AWS Lambda functions using Go, DynamoDB and Kinesis
 * Install gotestsum `go install gotest.tools/gotestsum@latest` (foe test reports in CI tools)
 * Install or update ginkgo `go install github.com/onsi/ginkgo/v2/ginkgo`
 * Install or update vuln checker `go install golang.org/x/vuln/cmd/govulncheck@latest`
+* Install proto compiler `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest`
+
+## Generate code from protobuf
+
+The booking event lambda receives a json message with a base64 encoded bytestring, the payload, which is parsed to the bookingpb.Event.
+The code is generated with protoc and the go compiler plugin as follows:
+```bash 
+ protoc --go_out=paths=source_relative:. proto/*proto
+```
 
 ## Testing
 
