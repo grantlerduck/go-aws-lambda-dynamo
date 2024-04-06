@@ -34,6 +34,16 @@ func (repo *EventRepository) Insert(event *booking.Event) (*booking.Event, error
 	return event, nil
 }
 
+func (repo *EventRepository) GetByKey(bookingId string, eventId string) (*booking.Event, error) {
+	// TODO
+	return nil, nil
+}
+
+func (repo *EventRepository) GetBookingEventsByBID(bookingId string) (*booking.Event, error) {
+	// TODO
+	return nil, nil
+}
+
 func NewEventRepository(region string, tableName string, logger *zap.Logger) *EventRepository {
 	client := NewClientWrapper(region)
 	return &EventRepository{dynamoClient: client, logger: logger, tableName: tableName}
