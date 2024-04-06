@@ -1,6 +1,7 @@
 package dynamo
 
 import (
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/google/uuid"
 	"github.com/grantlerduck/go-was-lambda-dyanmo/lib/domain/booking"
 	. "github.com/onsi/ginkgo/v2"
@@ -101,7 +102,7 @@ var _ = Describe("Booking state string", func() {
 })
 
 var _ = Describe("Given booking event", func() {
-	When("is has valid state", func() {
+	When("has valid state", func() {
 		event := booking.Event{
 			BookingId:    uuid.New().String(),
 			UserId:       uuid.New().String(),
@@ -125,7 +126,7 @@ var _ = Describe("Given booking event", func() {
 			AirlineName: event.AirlineName,
 			State:       PaymentPending,
 		}
-		It("maps to booking event with meaningful state", func() {
+		It("maps to dyanmo item with meaningful state", func() {
 			result := FromDomainBooking(&event)
 			Expect(result.EventId).ShouldNot(BeNil())
 			Expect(*result).To(MatchFields(IgnoreExtras, Fields{
@@ -140,6 +141,33 @@ var _ = Describe("Given booking event", func() {
 				"AirlineName": Equal(expectedResult.AirlineName),
 				"State":       Equal(expectedResult.State),
 			}))
+		})
+	})
+})
+
+var _ = Describe("Given dynamo item", func() {
+	item := Item{
+		EventId:     uuid.New().String(),
+		BookingId:   uuid.New().String(),
+		UserId:      uuid.New().String(),
+		TripFrom:    time.RFC3339,
+		TripUntil:   time.RFC3339,
+		HotelName:   "mockHotel",
+		HotelId:     uuid.New().String(),
+		FlightId:    uuid.New().String(),
+		AirlineName: "cheap-airline",
+		State:       PaymentPending,
+	}
+	When("marshaled to dynamo json", func() {
+		itemJson, marshallErr := attributevalue.MarshalMap(item)
+		It("does not return an error", func() {
+			Expect(marshallErr).ShouldNot(HaveOccurred())
+		})
+		It("can be marshalled back to item", func() {
+			var itemUnmarshalled Item
+			unmarshalErr := attributevalue.UnmarshalMap(itemJson, &itemUnmarshalled)
+			Expect(unmarshalErr).ShouldNot(HaveOccurred())
+			Expect(itemUnmarshalled).To(Equal(item))
 		})
 	})
 })
