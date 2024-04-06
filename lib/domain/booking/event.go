@@ -14,6 +14,7 @@ type Event struct {
 }
 
 type EventMessage struct {
-	Tenant  string
-	Payload string // base64 encoded bytestring, needs to be unmarshalled to bookingpb.Event
+	Tenant  string `json:"tenant"`
+	Origin  string `json:"origin"`
+	Payload string `json:"payload"` // base64 encoded bytestring, needs to be unmarshalled to bookingpb.Event
 }
