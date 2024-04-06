@@ -8,6 +8,7 @@ import (
 
 type DbClient interface {
 	PutItem(params *dynamodb.PutItemInput) (*dynamodb.PutItemOutput, error)
+	GetItem(params *dynamodb.PutItemInput) (*dynamodb.PutItemOutput, error)
 }
 
 type ClientWrapper struct {
@@ -16,6 +17,11 @@ type ClientWrapper struct {
 
 func (client *ClientWrapper) PutItem(input *dynamodb.PutItemInput) (*dynamodb.PutItemOutput, error) {
 	output, err := client.dynamoClient.PutItem(context.TODO(), input)
+	return output, err
+}
+
+func (client *ClientWrapper) GetItem(input *dynamodb.GetItemInput) (*dynamodb.GetItemOutput, error) {
+	output, err := client.dynamoClient.GetItem(context.TODO(), input)
 	return output, err
 }
 
