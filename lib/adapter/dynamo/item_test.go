@@ -24,6 +24,9 @@ var _ = Describe("Given booking event", func() {
 			BookingState: "booking-fee-pending",
 		}
 		expectedResult := Item{
+			Pk:          uuid.New().String(),
+			Sk:          event.BookingId,
+			Gsi1Pk:      event.BookingId,
 			EventId:     uuid.New().String(),
 			BookingId:   event.BookingId,
 			UserId:      event.UserId,
@@ -36,11 +39,14 @@ var _ = Describe("Given booking event", func() {
 			State:       PaymentPending,
 		}
 		It("maps to dyanmo item with meaningful state", func() {
-			result := FromDomainBooking(&event)
+			result := new(Item).fromDomainBooking(&event)
 			Expect(result.EventId).ShouldNot(BeNil())
 			Expect(*result).To(MatchFields(IgnoreExtras, Fields{
 				"EventId":     Ignore(),
+				"Pk":          Ignore(),
 				"BookingId":   Equal(expectedResult.BookingId),
+				"Sk":          Equal(expectedResult.BookingId),
+				"Gsi1Pk":      Equal(expectedResult.BookingId),
 				"UserId":      Equal(expectedResult.UserId),
 				"TripFrom":    Equal(expectedResult.TripFrom),
 				"TripUntil":   Equal(expectedResult.TripUntil),
@@ -56,6 +62,9 @@ var _ = Describe("Given booking event", func() {
 
 var _ = Describe("Given dynamo item", func() {
 	item := Item{
+		Pk:          uuid.New().String(),
+		Sk:          uuid.New().String(),
+		Gsi1Pk:      uuid.New().String(),
 		EventId:     uuid.New().String(),
 		BookingId:   uuid.New().String(),
 		UserId:      uuid.New().String(),
@@ -92,7 +101,7 @@ var _ = Describe("Given dynamo item", func() {
 			BookingState: item.State.String(),
 		}
 		It("equals expected", func() {
-			actual := ToBookingDomain(item)
+			actual := item.toBookingDomain()
 			Expect(actual).To(Equal(&expectedDomainEvent))
 		})
 	})

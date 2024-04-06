@@ -6,12 +6,16 @@ import (
 )
 
 const (
-	HasKeyAttribute  string = "event_id"
-	SortKeyAttribute string = "booking_id"
-	Gsi1KeyAttribute string = "booking_id"
+	itemHasKeyAttribute  string = "pk"
+	itemSortKeyAttribute string = "sk"
+	itemGsi1KeyAttribute string = "gsi1_pk"
+	itemGsi1IndexName    string = "GSI1"
 )
 
 type Item struct {
+	Pk          string `json:"pk" dynamodbav:"pk"`
+	Sk          string `json:"sk" dynamodbav:"sk"`
+	Gsi1Pk      string `json:"gsi1_pk" dynamodbav:"gsi1_pk"`
 	EventId     string `json:"event_id" dynamodbav:"event_id"`
 	BookingId   string `json:"booking_id" dynamodbav:"booking_id"`
 	UserId      string `json:"user_id" dynamodbav:"user_id"`
@@ -24,9 +28,12 @@ type Item struct {
 	State       State  `json:"state" dynamodbav:"state"`
 }
 
-func FromDomainBooking(domain *booking.Event) *Item {
-	item := new(Item)
-	item.EventId = uuid.New().String()
+func (item *Item) fromDomainBooking(domain *booking.Event) *Item {
+	evId := uuid.New().String()
+	item.Pk = evId
+	item.Sk = domain.BookingId
+	item.Gsi1Pk = domain.BookingId
+	item.EventId = evId
 	item.BookingId = domain.BookingId
 	item.UserId = domain.UserId
 	item.TripFrom = domain.TripFrom
@@ -39,7 +46,7 @@ func FromDomainBooking(domain *booking.Event) *Item {
 	return item
 }
 
-func ToBookingDomain(item Item) *booking.Event {
+func (item *Item) toBookingDomain() *booking.Event {
 	event := new(booking.Event)
 	event.BookingId = item.BookingId
 	event.UserId = item.UserId
