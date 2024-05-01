@@ -25,11 +25,11 @@ func init() {
 }
 
 type FailedToProcessError struct {
-	event booking.Event
+	event booking.EventMessage
 }
 
 func (e *FailedToProcessError) Error() string {
-	return fmt.Sprintf("failed to process event %s", e.event.BookingId)
+	return fmt.Sprintf("failed to process event %s", e.event.Key)
 }
 
 type EventNilError struct{}
@@ -43,11 +43,11 @@ type BookingHandler struct {
 	logger  *zap.Logger
 }
 
-func (handler *BookingHandler) HandleRequest(ctx context.Context, event *booking.Event) (*string, error) {
+func (handler *BookingHandler) HandleRequest(ctx context.Context, event *booking.EventMessage) (*string, error) {
 	if event == nil {
 		return nil, &EventNilError{}
 	}
-	handler.logger.Info("received booking event", zap.Any("eventId", event.BookingId))
+	handler.logger.Info("received booking event", zap.Any("eventId", event.Key))
 	ev, err := handler.service.Process(event)
 	if err != nil {
 		return nil, &FailedToProcessError{*event}

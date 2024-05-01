@@ -1,20 +1,21 @@
-package dynamo
+package booking
 
 import "strings"
 
 type State string
 
+// Just getting used to enums in go, would replace it with just protobuf
 const (
-	Unconfirmed     State = "booking-unconfirmed"
-	Confirmed       State = "booking-confirmed"
-	PaymentReceived State = "booking-fee-payed"
-	PaymentPending  State = "booking-fee-pending"
-	Planned         State = "booking-planned"
-	Canceled        State = "booking-canceled"
-	CheckedIn       State = "checked-in"
-	CheckedOut      State = "checked-out"
-	ReviewPending   State = "review-pending"
-	Reviewed        State = "customer-reviewed"
+	Unconfirmed     State = "unconfirmed"
+	Confirmed       State = "confirmed"
+	PaymentReceived State = "payment_received"
+	PaymentPending  State = "payment_pending"
+	Planned         State = "planned"
+	Canceled        State = "canceled"
+	CheckedIn       State = "checked_in"
+	CheckedOut      State = "checked_out"
+	ReviewPending   State = "review_pending"
+	Reviewed        State = "reviewed"
 	Unknown         State = "unknown"
 )
 

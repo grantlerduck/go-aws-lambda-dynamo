@@ -21,7 +21,7 @@ var _ = Describe("Given booking event", func() {
 			HotelId:      uuid.New().String(),
 			FlightId:     uuid.New().String(),
 			AirlineName:  "cheap-airline",
-			BookingState: "booking-fee-pending",
+			BookingState: booking.PaymentPending,
 		}
 		expectedResult := Item{
 			Pk:          uuid.New().String(),
@@ -36,7 +36,7 @@ var _ = Describe("Given booking event", func() {
 			HotelId:     event.HotelId,
 			FlightId:    event.FlightId,
 			AirlineName: event.AirlineName,
-			State:       PaymentPending,
+			State:       booking.PaymentPending,
 		}
 		It("maps to dyanmo item with meaningful state", func() {
 			result := new(Item).fromDomainBooking(&event)
@@ -74,7 +74,7 @@ var _ = Describe("Given dynamo item", func() {
 		HotelId:     uuid.New().String(),
 		FlightId:    uuid.New().String(),
 		AirlineName: "cheap-airline",
-		State:       PaymentPending,
+		State:       booking.PaymentPending,
 	}
 	When("marshaled to dynamo json", func() {
 		itemJson, marshallErr := attributevalue.MarshalMap(item)
@@ -98,7 +98,7 @@ var _ = Describe("Given dynamo item", func() {
 			HotelId:      item.HotelId,
 			FlightId:     item.FlightId,
 			AirlineName:  item.AirlineName,
-			BookingState: item.State.String(),
+			BookingState: item.State,
 		}
 		It("equals expected", func() {
 			actual := item.toBookingDomain()
