@@ -3,7 +3,7 @@ package dynamo
 import (
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/google/uuid"
-	"github.com/grantlerduck/go-was-lambda-dyanmo/lib/domain/booking"
+	"github.com/grantlerduck/go-aws-lambda-dynamo/lib/domain/booking"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/google/uuid"
-	"github.com/grantlerduck/go-was-lambda-dyanmo/lib/domain/booking"
+	"github.com/grantlerduck/go-aws-lambda-dynamo/lib/domain/booking"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )

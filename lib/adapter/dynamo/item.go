@@ -2,7 +2,7 @@ package dynamo
 
 import (
 	"github.com/google/uuid"
-	"github.com/grantlerduck/go-was-lambda-dyanmo/lib/domain/booking"
+	"github.com/grantlerduck/go-aws-lambda-dynamo/lib/domain/booking"
 )
 
 const (

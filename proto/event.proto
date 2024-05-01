@@ -1,7 +1,7 @@
 syntax = "proto3";
 package proto;
 
-option go_package = "github.com/grantlerduck/go-was-lambda-dyanmo/domain/bookingpb";
+option go_package = "github.com/grantlerduck/go-aws-lambda-dynamo/domain/bookingpb";
 
 message Event {
   string user_id = 2;

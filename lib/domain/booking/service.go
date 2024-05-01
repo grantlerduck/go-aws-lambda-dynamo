@@ -2,7 +2,7 @@ package booking
 
 import (
 	"encoding/base64"
-	bookingpb "github.com/grantlerduck/go-was-lambda-dyanmo/proto"
+	bookingpb "github.com/grantlerduck/go-aws-lambda-dynamo/proto"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 	"time"
