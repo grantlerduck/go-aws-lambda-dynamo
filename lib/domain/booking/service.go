@@ -2,6 +2,8 @@ package booking
 
 import (
 	"encoding/base64"
+	"fmt"
+	"github.com/google/uuid"
 	bookingpb "github.com/grantlerduck/go-aws-lambda-dynamo/proto"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -9,6 +11,15 @@ import (
 )
 
 const timeFormat = "2006-01-02T15:04:05.999999999Z-0700"
+const minAllowedEpochMillis = 946724400000
+
+type InvalidEventMessageError struct {
+	msg string
+}
+
+func (e *InvalidEventMessageError) Error() string {
+	return e.msg
+}
 
 type Service interface {
 	Process(event *EventMessage) (*Event, error)
@@ -28,6 +39,13 @@ func (ep *EventProcessor) Process(eventmsg *EventMessage) (*Event, error) {
 		)
 		return nil, decodeErr
 	}
+	vaidationErr := ep.validate(pb)
+	if vaidationErr != nil {
+		ep.logger.Error("failed to process eventmsg",
+			zap.String("key", eventmsg.Key),
+			zap.Error(vaidationErr),
+		)
+	}
 	evnt := ep.mapToEvent(pb, eventmsg.Key)
 	result, repoErr := ep.repo.Insert(evnt)
 	if repoErr != nil {
@@ -42,21 +60,59 @@ func (ep *EventProcessor) Process(eventmsg *EventMessage) (*Event, error) {
 }
 
 func (ep *EventProcessor) decodePayload(payload string) (*bookingpb.Event, error) {
-	bytes, err := base64.StdEncoding.DecodeString(payload)
-	if err != nil {
+	bytes, decodeErr := base64.StdEncoding.DecodeString(payload)
+	if decodeErr != nil {
 		ep.logger.Error("failed to decode event payload",
-			zap.Error(err),
+			zap.Error(decodeErr),
 		)
-		return nil, err
+		return nil, decodeErr
 	}
 	var evntpb bookingpb.Event
 	marshallErr := proto.Unmarshal(bytes, &evntpb)
 	if marshallErr != nil {
 		ep.logger.Error("failed to unmarshal payload",
-			zap.Error(err),
+			zap.Error(marshallErr),
 		)
+		return nil, marshallErr
+	}
+	initErr := proto.CheckInitialized(&evntpb)
+	if initErr != nil {
+		ep.logger.Error("failed to properly initialize payload",
+			zap.Error(initErr),
+		)
+		return nil, initErr
 	}
 	return &evntpb, nil
+}
+
+func (ep *EventProcessor) validate(evntpb *bookingpb.Event) error {
+	if evntpb.ToEpochMillis <= minAllowedEpochMillis || evntpb.FromEpochMillis <= minAllowedEpochMillis {
+		return &InvalidEventMessageError{"invalid epoch milliseconds for 'to' and 'from' of message"}
+	}
+	if len(evntpb.HotelId) < 36 || !ep.isUUID(evntpb.HotelId) || len(evntpb.HotelName) < 5 {
+		return &InvalidEventMessageError{
+			fmt.Sprintf("invalid hotel information hotelId=%s, hotelName=%s", evntpb.HotelId, evntpb.HotelName),
+		}
+	}
+	if len(evntpb.AirlineName) < 3 || !ep.isUUID(evntpb.FlightId) {
+		return &InvalidEventMessageError{
+			fmt.Sprintf("invalid flight information flightId=%s, airlineName=%s", evntpb.FlightId, evntpb.AirlineName),
+		}
+	}
+	if !ep.isUUID(evntpb.UserId) {
+		return &InvalidEventMessageError{
+			fmt.Sprintf("invalid user information userID=%s", evntpb.UserId),
+		}
+	}
+	return nil
+}
+
+func (ep *EventProcessor) isUUID(str string) bool {
+	_, err := uuid.Parse(str)
+	if err != nil {
+		return false
+	}
+	return true
 }
 
 func (ep *EventProcessor) mapToEvent(evntpb *bookingpb.Event, key string) *Event {

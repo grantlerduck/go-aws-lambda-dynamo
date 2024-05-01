@@ -56,6 +56,9 @@ func (handler *BookingHandler) HandleRequest(ctx context.Context, event *booking
 }
 
 func main() {
+	defer func() {
+		_ = logger.Sync()
+	}()
 	env := app.NewBookingEnv()
 	repo := dynamo.NewEventRepository(env.Region, env.TableName, logger)
 	service := booking.NewBookingService(repo, logger)
