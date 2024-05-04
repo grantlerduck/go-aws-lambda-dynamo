@@ -109,10 +109,7 @@ func (ep *EventProcessor) validate(evntpb *bookingpb.Event) error {
 
 func (ep *EventProcessor) isUUID(str string) bool {
 	_, err := uuid.Parse(str)
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 func (ep *EventProcessor) mapToEvent(evntpb *bookingpb.Event, key string) *Event {
