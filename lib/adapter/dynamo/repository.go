@@ -45,8 +45,8 @@ func (repo *EventRepository) GetByKey(bookingId string, eventId string) (*bookin
 	getItemInput := &dynamodb.GetItemInput{
 		TableName: aws.String(repo.tableName),
 		Key: map[string]types.AttributeValue{
-			itemHasKeyAttribute:  &types.AttributeValueMemberS{Value: eventId},
-			itemSortKeyAttribute: &types.AttributeValueMemberS{Value: bookingId},
+			ItemHasKeyAttribute:  &types.AttributeValueMemberS{Value: eventId},
+			ItemSortKeyAttribute: &types.AttributeValueMemberS{Value: bookingId},
 		},
 	}
 	output, getItemErr := repo.dynamoClient.GetItem(getItemInput)
@@ -72,10 +72,10 @@ func (repo *EventRepository) GetByKey(bookingId string, eventId string) (*bookin
 }
 
 func (repo *EventRepository) GetBookingEventsByBID(bookingId string) (*[]booking.Event, error) {
-	keyCondition := fmt.Sprintf("%s = :key", itemGsi1KeyAttribute)
+	keyCondition := fmt.Sprintf("%s = :key", ItemGsi1KeyAttribute)
 	queryInput := dynamodb.QueryInput{
 		TableName:              aws.String(repo.tableName),
-		IndexName:              aws.String(itemGsi1IndexName),
+		IndexName:              aws.String(ItemGsi1IndexName),
 		KeyConditionExpression: aws.String(keyCondition),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":key": &types.AttributeValueMemberS{Value: bookingId},
@@ -93,8 +93,9 @@ func (repo *EventRepository) GetBookingEventsByBID(bookingId string) (*[]booking
 }
 
 func (repo *EventRepository) handleQueryAvs(avs []map[string]types.AttributeValue, bookingId string) (*[]booking.Event, error) {
-	var items []Item
-	unmarshalErr := attributevalue.UnmarshalListOfMaps(avs, items)
+	var items []Item = (make([]Item, len(avs)))
+	var itemsPointr = &items
+	unmarshalErr := attributevalue.UnmarshalListOfMaps(avs, itemsPointr)
 	if unmarshalErr != nil {
 		repo.logger.Error("failed to unmarshal Query output",
 			zap.String("bookingId", bookingId),
@@ -103,19 +104,20 @@ func (repo *EventRepository) handleQueryAvs(avs []map[string]types.AttributeValu
 		return nil, unmarshalErr
 	}
 	var events []booking.Event
-	if len(items) == 0 {
-		repo.logger.Info("No events for query with",
-			zap.String("booking_id", bookingId),
-		)
-		return &events, nil
-	}
-	for i := range items {
-		events = append(events, *items[i].toBookingDomain())
+	for i := range (items) {
+		item := items[i]
+		events = append(events, *item.toBookingDomain())
+	
 	}
 	return &events, nil
 }
 
 func NewEventRepository(region string, tableName string, logger *zap.Logger) *EventRepository {
 	client := NewClientWrapper(region)
+	return &EventRepository{dynamoClient: client, logger: logger, tableName: tableName}
+}
+
+func NewLocalEventRepository(dynamoClient *dynamodb.Client, tableName string, logger *zap.Logger) *EventRepository {
+	client := NewClientWrapperFromClient(dynamoClient)
 	return &EventRepository{dynamoClient: client, logger: logger, tableName: tableName}
 }

@@ -41,3 +41,10 @@ func NewClientWrapper(region string) *ClientWrapper {
 	})
 	return &ClientWrapper{dynamoClient: dynamoClient}
 }
+
+func NewClientWrapperFromClient(client *dynamodb.Client) *ClientWrapper {
+	if client == nil {
+		panic("Client is nil")
+	}
+	return &ClientWrapper{dynamoClient: client}
+}

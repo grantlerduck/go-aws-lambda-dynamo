@@ -6,10 +6,10 @@ import (
 )
 
 const (
-	itemHasKeyAttribute  string = "pk"
-	itemSortKeyAttribute string = "sk"
-	itemGsi1KeyAttribute string = "gsi1_pk"
-	itemGsi1IndexName    string = "GSI1"
+	ItemHasKeyAttribute  string = "pk"
+	ItemSortKeyAttribute string = "sk"
+	ItemGsi1KeyAttribute string = "gsi1_pk"
+	ItemGsi1IndexName    string = "GSI1"
 )
 
 type Item struct {
