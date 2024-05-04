@@ -1,7 +1,7 @@
 package booking
 
-// Event TODO: replace by EventMessage and implement the parsing in service layer
 type Event struct {
+	EventId      string `json:"event_id"`
 	BookingId    string `json:"booking_id"`
 	UserId       string `json:"user_id"`
 	TripFrom     string `json:"from"`

@@ -13,6 +13,7 @@ import (
 var _ = Describe("Given booking event", func() {
 	When("has valid state", func() {
 		event := booking.Event{
+			EventId:      uuid.New().String(),
 			BookingId:    uuid.New().String(),
 			UserId:       uuid.New().String(),
 			TripFrom:     time.RFC3339,
@@ -24,10 +25,10 @@ var _ = Describe("Given booking event", func() {
 			BookingState: booking.PaymentPending,
 		}
 		expectedResult := Item{
-			Pk:          uuid.New().String(),
+			Pk:          event.EventId,
 			Sk:          event.BookingId,
 			Gsi1Pk:      event.BookingId,
-			EventId:     uuid.New().String(),
+			EventId:     event.EventId,
 			BookingId:   event.BookingId,
 			UserId:      event.UserId,
 			TripFrom:    event.TripFrom,
@@ -90,6 +91,7 @@ var _ = Describe("Given dynamo item", func() {
 	})
 	When("mapped to domain", func() {
 		expectedDomainEvent := booking.Event{
+			EventId:      item.EventId,
 			BookingId:    item.BookingId,
 			UserId:       item.UserId,
 			TripFrom:     item.TripFrom,

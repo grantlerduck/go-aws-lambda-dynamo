@@ -1,7 +1,6 @@
 package dynamo
 
 import (
-	"github.com/google/uuid"
 	"github.com/grantlerduck/go-aws-lambda-dynamo/lib/domain/booking"
 )
 
@@ -29,11 +28,10 @@ type Item struct {
 }
 
 func (item *Item) fromDomainBooking(domain *booking.Event) *Item {
-	evId := uuid.New().String()
-	item.Pk = evId
+	item.Pk = domain.EventId
 	item.Sk = domain.BookingId
 	item.Gsi1Pk = domain.BookingId
-	item.EventId = evId
+	item.EventId = domain.EventId
 	item.BookingId = domain.BookingId
 	item.UserId = domain.UserId
 	item.TripFrom = domain.TripFrom
@@ -48,6 +46,7 @@ func (item *Item) fromDomainBooking(domain *booking.Event) *Item {
 
 func (item *Item) toBookingDomain() *booking.Event {
 	event := new(booking.Event)
+	event.EventId = item.EventId
 	event.BookingId = item.BookingId
 	event.UserId = item.UserId
 	event.TripFrom = item.TripFrom

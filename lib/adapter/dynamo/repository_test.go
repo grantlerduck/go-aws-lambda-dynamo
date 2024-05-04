@@ -49,6 +49,7 @@ var _ = Describe("Given event repository", Ordered, func() {
 	// this suit is ordered be carful!
 	It("event is inserted into table", func() {
 		event := booking.Event{
+			EventId: 	  uuid.New().String(),
 			BookingId:    uuid.New().String(),
 			UserId:       uuid.New().String(),
 			TripFrom:     "2006-01-02T15:04:05.999999999Z-0700",
@@ -65,6 +66,7 @@ var _ = Describe("Given event repository", Ordered, func() {
 	})
 	It("event is queried by gsi", func() {
 		event := booking.Event{
+			EventId: 	  uuid.New().String(),
 			BookingId:    uuid.New().String(),
 			UserId:       uuid.New().String(),
 			TripFrom:     "2006-01-02T15:04:05.999999999Z-0700",

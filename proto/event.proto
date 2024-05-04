@@ -4,6 +4,7 @@ package proto;
 option go_package = "github.com/grantlerduck/go-aws-lambda-dynamo/domain/bookingpb";
 
 message Event {
+  string booking_id = 1;
   string user_id = 2;
   int64 from_epoch_millis = 3;
   int64 to_epoch_millis = 4;

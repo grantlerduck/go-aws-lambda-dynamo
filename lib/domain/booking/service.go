@@ -39,14 +39,15 @@ func (ep *EventProcessor) Process(eventmsg *EventMessage) (*Event, error) {
 		)
 		return nil, decodeErr
 	}
-	vaidationErr := ep.validate(pb)
-	if vaidationErr != nil {
+	validationErr := ep.validate(pb)
+	if validationErr != nil {
 		ep.logger.Error("failed to process eventmsg",
 			zap.String("key", eventmsg.Key),
-			zap.Error(vaidationErr),
+			zap.Error(validationErr),
 		)
+		return nil, validationErr
 	}
-	evnt := ep.mapToEvent(pb, eventmsg.Key)
+	evnt := ep.mapToEvent(pb)
 	result, repoErr := ep.repo.Insert(evnt)
 	if repoErr != nil {
 		ep.logger.Error("failed to process eventmsg",
@@ -99,9 +100,9 @@ func (ep *EventProcessor) validate(evntpb *bookingpb.Event) error {
 			fmt.Sprintf("invalid flight information flightId=%s, airlineName=%s", evntpb.FlightId, evntpb.AirlineName),
 		}
 	}
-	if !ep.isUUID(evntpb.UserId) {
+	if !ep.isUUID(evntpb.UserId) || !ep.isUUID(evntpb.BookingId) {
 		return &InvalidEventMessageError{
-			fmt.Sprintf("invalid user information userID=%s", evntpb.UserId),
+			fmt.Sprintf("invalid booking information userID=%s", evntpb.UserId),
 		}
 	}
 	return nil
@@ -112,9 +113,10 @@ func (ep *EventProcessor) isUUID(str string) bool {
 	return err == nil
 }
 
-func (ep *EventProcessor) mapToEvent(evntpb *bookingpb.Event, key string) *Event {
+func (ep *EventProcessor) mapToEvent(evntpb *bookingpb.Event) *Event {
 	event := Event{}
-	event.BookingId = key
+	event.EventId = uuid.New().String()
+	event.BookingId = evntpb.BookingId
 	event.UserId = evntpb.UserId
 	event.TripFrom = time.UnixMilli(evntpb.FromEpochMillis).Format(timeFormat)
 	event.TripUntil = time.UnixMilli(evntpb.ToEpochMillis).Format(timeFormat)

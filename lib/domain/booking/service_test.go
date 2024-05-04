@@ -19,17 +19,17 @@ var _ = Describe("Given booking service", func() {
 
 		})
 	})
-	When("payload is invalid", func() {
+	When("payload is invalid and", func() {
 		logger, _ := zap.NewDevelopment()
 		service := EventProcessor{&MockBookingRepo{}, logger}
-		When("and no bas64 byte string", func() {
+		When("message no base64 byte string", func() {
 			It("returns decoding error", func() {
 				evntMsg := EventMessage{Key: uuid.New().String(), Tenant: "eu", Origin: "marketplace", Payload: "üöäü?12qwd"}
 				_, decodeErr := service.Process(&evntMsg)
 				Expect(decodeErr).Should(Equal(base64.CorruptInputError(0)))
 			})
 		})
-		When("and no valid protobuf bytes", func() {
+		When("message no valid protobuf bytes", func() {
 			It("return protobuf marshall error", func() {
 				randomBase64String := "MMI7NwW5SWfdx9N/swQqHGozVHC+2XxMf/cf7h6ih8BpSIhHwgIx2WpebkPmP3QMymZUgEVksENKhqXpU32nmsisYTQidszf3fBDNC8oo7N3VN/k8F+4UfHYuxCVWoc9XLYcxfdX1A+RdrtE8rnr+ZaHMlOpv1S5/2381A=="
 				evntMsg := EventMessage{Key: uuid.New().String(), Tenant: "eu", Origin: "marketplace", Payload: randomBase64String}
@@ -37,12 +37,11 @@ var _ = Describe("Given booking service", func() {
 				Expect(marshalErr).Should(HaveOccurred())
 			})
 		})
-		When("and empty bytes", func() {
-			It("return init error", func() {
+		When("message is empty bytes", func() {
+			It("return error", func() {
 				randomBase64String := ""
 				evntMsg := EventMessage{Key: uuid.New().String(), Tenant: "eu", Origin: "marketplace", Payload: randomBase64String}
 				_, validationErr := service.Process(&evntMsg)
-				// TODO assert for explicit err
 				Expect(validationErr).Should(HaveOccurred())
 			})
 		})
