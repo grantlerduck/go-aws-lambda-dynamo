@@ -58,7 +58,7 @@ func (repo *EventRepository) GetByKey(bookingId string, eventId string) (*bookin
 		)
 		return nil, getItemErr
 	}
-	var item Item
+	item := new(Item)
 	unmarshalErr := attributevalue.UnmarshalMap(output.Item, item)
 	if unmarshalErr != nil {
 		repo.logger.Error("failed to unmarshal GetItem output",

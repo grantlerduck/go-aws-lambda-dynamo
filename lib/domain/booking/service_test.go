@@ -3,25 +3,67 @@ package booking
 import (
 	"encoding/base64"
 	"errors"
+	"time"
+
 	"github.com/google/uuid"
+	bookingpb "github.com/grantlerduck/go-aws-lambda-dynamo/proto"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"go.uber.org/zap"
+	"google.golang.org/protobuf/proto"
 )
 
 var _ = Describe("Given booking service", func() {
+	logger, _ := zap.NewDevelopment()
+	service := EventProcessor{&MockBookingRepo{}, logger}
 	When("payload valid message", func() {
-		When("repository does not returns error on insert", func() {
-			println("TODO")
+		When("and service unmarshalls and validates message", func() {
+			It("repository does not returns error on insert", func() {
+				evntPb := bookingpb.Event{
+					BookingId:       uuid.New().String(),
+					UserId:          uuid.New().String(),
+					FromEpochMillis: time.Now().UnixMilli(),
+					ToEpochMillis:   time.Now().UnixMilli(),
+					HotelName:       "mockHotel",
+					HotelId:         uuid.New().String(),
+					FlightId:        uuid.New().String(),
+					AirlineName:     "cheap-airline",
+					BookingState:    bookingpb.State_checked_in,
+				}
+				bytes, marshalErr := proto.Marshal(&evntPb)
+				Expect(marshalErr).ShouldNot(HaveOccurred())
+				eventPayload := base64.StdEncoding.EncodeToString(bytes)
+				evntMsg := EventMessage{Key: uuid.New().String(), Tenant: "eu", Origin: "marketplace", Payload: eventPayload}
+				_, err := service.Process(&evntMsg) // the return value is mocked from the repo
+				Expect(err).ShouldNot(HaveOccurred())
+			})
 		})
-		When("repository returns error on insert", func() {
-			println("TODO")
-
+		When("and service unmarshalls and validates message", func() {
+			logger, _ := zap.NewDevelopment()
+			service := EventProcessor{&MockBookingFailRepo{}, logger}
+			It("repository does returns error on insert", func() {
+				
+				evntPb := bookingpb.Event{
+					BookingId:       uuid.New().String(),
+					UserId:          uuid.New().String(),
+					FromEpochMillis: time.Now().UnixMilli(),
+					ToEpochMillis:   time.Now().UnixMilli(),
+					HotelName:       "mockHotel",
+					HotelId:         uuid.New().String(),
+					FlightId:        uuid.New().String(),
+					AirlineName:     "cheap-airline",
+					BookingState:    bookingpb.State_checked_in,
+				}
+				bytes, marshalErr := proto.Marshal(&evntPb)
+				Expect(marshalErr).ShouldNot(HaveOccurred())
+				eventPayload := base64.StdEncoding.EncodeToString(bytes)
+				evntMsg := EventMessage{Key: uuid.New().String(), Tenant: "eu", Origin: "marketplace", Payload: eventPayload}
+				_, err := service.Process(&evntMsg) // the return value is mocked from the repo
+				Expect(err).Should(HaveOccurred())
+			})
 		})
 	})
 	When("payload is invalid and", func() {
-		logger, _ := zap.NewDevelopment()
-		service := EventProcessor{&MockBookingRepo{}, logger}
 		When("message no base64 byte string", func() {
 			It("returns decoding error", func() {
 				evntMsg := EventMessage{Key: uuid.New().String(), Tenant: "eu", Origin: "marketplace", Payload: "üöäü?12qwd"}

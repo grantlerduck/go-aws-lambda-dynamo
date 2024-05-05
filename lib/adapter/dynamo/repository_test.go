@@ -46,9 +46,7 @@ var _ = Describe("Given event repository", Ordered, func() {
 		Expect(err).ShouldNot(HaveOccurred())
 		repo = NewLocalEventRepository(dynamoClientLocal, testTable, logger)
 	})
-	// this suit is ordered be carful!
-	It("event is inserted into table", func() {
-		event := booking.Event{
+	event := booking.Event{
 			EventId: 	  uuid.New().String(),
 			BookingId:    uuid.New().String(),
 			UserId:       uuid.New().String(),
@@ -60,32 +58,24 @@ var _ = Describe("Given event repository", Ordered, func() {
 			AirlineName:  "cheap-airline",
 			BookingState: booking.PaymentPending,
 		}
+	// this suit is ordered be carful!
+	It("event is inserted into table", func() {
 		actual, err := repo.Insert(&event)
 		Expect(err).ShouldNot(HaveOccurred())
 		Expect(actual).Should(Equal(&event))
 	})
 	It("event is queried by gsi", func() {
-		event := booking.Event{
-			EventId: 	  uuid.New().String(),
-			BookingId:    uuid.New().String(),
-			UserId:       uuid.New().String(),
-			TripFrom:     "2006-01-02T15:04:05.999999999Z-0700",
-			TripUntil:    "2006-01-02T15:04:05.999999999Z-0700",
-			HotelName:    "mockHotel",
-			HotelId:      uuid.New().String(),
-			FlightId:     uuid.New().String(),
-			AirlineName:  "cheap-airline",
-			BookingState: booking.PaymentPending,
-		}
-		expectedResults := 1
-		_, err := repo.Insert(&event)
-		Expect(err).ShouldNot(HaveOccurred())
 		results, err := repo.GetBookingEventsByBID(event.BookingId)
 		Expect(err).ShouldNot(HaveOccurred())
 		resulsDeref := (*results)
-		Expect(len(resulsDeref)).Should(Equal(expectedResults))
+		Expect(len(resulsDeref)).Should(Equal(1))
 		actual := resulsDeref[0]
 		Expect(actual).Should(Equal(event))
+	})
+	It("event is get by id successful", func() {
+		actual, err := repo.GetByKey(event.BookingId, event.EventId)
+		Expect(err).ShouldNot(HaveOccurred())
+		Expect(actual).Should(Equal(&event))
 	})
 	AfterAll(func() {
 		if err := localStackContainer.Terminate(context.Background()); err != nil {

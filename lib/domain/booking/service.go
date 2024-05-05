@@ -90,7 +90,7 @@ func (ep *EventProcessor) validate(evntpb *bookingpb.Event) error {
 	if evntpb.ToEpochMillis <= minAllowedEpochMillis || evntpb.FromEpochMillis <= minAllowedEpochMillis {
 		return &InvalidEventMessageError{"invalid epoch milliseconds for 'to' and 'from' of message"}
 	}
-	if len(evntpb.HotelId) < 36 || !ep.isUUID(evntpb.HotelId) || len(evntpb.HotelName) < 5 {
+	if !ep.isUUID(evntpb.HotelId) || len(evntpb.HotelName) < 5 {
 		return &InvalidEventMessageError{
 			fmt.Sprintf("invalid hotel information hotelId=%s, hotelName=%s", evntpb.HotelId, evntpb.HotelName),
 		}
