@@ -19,6 +19,10 @@ However, it is a nice practice to get the concepts.
 Background: I am mainly a Kotlin/Spring Developer and AWS Cloud Architect with a DataSceince backround.
 Hence, you will find javaish or pythonish patterns in the code. It has hard to get rid of habbits :D
 
+# AWS Infrastructure
+
+Coming Soon
+
 
 ## Setup
 * Install go modules required for local development
