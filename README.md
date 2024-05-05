@@ -1,6 +1,24 @@
 # go-aws-lambda-dynamo
 
-AWS Lambda functions using Go, DynamoDB and Kinesis
+AWS Lambda function using Go and DynamoDB.
+The lambda is implemented in hexagonal architecture (a slight overkill for such a small functions).
+
+Rough functinality & scenario:
+* The lambda receives a travel booking event as a message with bas64 encoded payload
+* The base64 encoded payload is decoded and marshaled to the protobuf event definition
+* The protobuf message is mapped to a domain event
+* The domain event is passed to the dynamodb repository and it is inserted into the table
+    * In addtion, the repostiroy implements functions to get events by hash and sort key
+    * and a global secondary index query
+* The repsoitory returns the domain event
+* The lambda handler returns the bookingId of the persisted event
+
+This scenario is not particular useful nor fully-real world.
+However, it is a nice practice to get the concepts.
+
+Background: I am mainly a Kotlin/Spring Developer and AWS Cloud Architect with a DataSceince backround.
+Hence, you will find javaish or pythonish patterns in the code. It has hard to get rid of habbits :D
+
 
 ## Setup
 * Install go modules required for local development
