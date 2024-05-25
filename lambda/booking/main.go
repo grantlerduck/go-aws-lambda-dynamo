@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/grantlerduck/go-aws-lambda-dynamo/lib/adapter/dynamo"
-	"github.com/grantlerduck/go-aws-lambda-dynamo/lib/app"
-	"github.com/grantlerduck/go-aws-lambda-dynamo/lib/domain/booking"
+	"github.com/grantlerduck/go-aws-lambda-dynamo/internal/adapter/dynamo"
+	"github.com/grantlerduck/go-aws-lambda-dynamo/internal/app"
+	"github.com/grantlerduck/go-aws-lambda-dynamo/internal/domain/booking"
 	"go.uber.org/zap"
 	"log"
 )

@@ -6,7 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-	"github.com/grantlerduck/go-aws-lambda-dynamo/lib/domain/booking"
+	"github.com/grantlerduck/go-aws-lambda-dynamo/internal/domain/booking"
 	"go.uber.org/zap"
 )
 
@@ -104,10 +104,10 @@ func (repo *EventRepository) handleQueryAvs(avs []map[string]types.AttributeValu
 		return nil, unmarshalErr
 	}
 	var events []booking.Event
-	for i := range (items) {
+	for i := range items {
 		item := items[i]
 		events = append(events, *item.toBookingDomain())
-	
+
 	}
 	return &events, nil
 }

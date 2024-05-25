@@ -11,7 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/docker/go-connections/nat"
 	"github.com/google/uuid"
-	"github.com/grantlerduck/go-aws-lambda-dynamo/lib/domain/booking"
+	"github.com/grantlerduck/go-aws-lambda-dynamo/internal/domain/booking"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/testcontainers/testcontainers-go"
@@ -47,17 +47,17 @@ var _ = Describe("Given event repository", Ordered, func() {
 		repo = NewLocalEventRepository(dynamoClientLocal, testTable, logger)
 	})
 	event := booking.Event{
-			EventId: 	  uuid.New().String(),
-			BookingId:    uuid.New().String(),
-			UserId:       uuid.New().String(),
-			TripFrom:     "2006-01-02T15:04:05.999999999Z-0700",
-			TripUntil:    "2006-01-02T15:04:05.999999999Z-0700",
-			HotelName:    "mockHotel",
-			HotelId:      uuid.New().String(),
-			FlightId:     uuid.New().String(),
-			AirlineName:  "cheap-airline",
-			BookingState: booking.PaymentPending,
-		}
+		EventId:      uuid.New().String(),
+		BookingId:    uuid.New().String(),
+		UserId:       uuid.New().String(),
+		TripFrom:     "2006-01-02T15:04:05.999999999Z-0700",
+		TripUntil:    "2006-01-02T15:04:05.999999999Z-0700",
+		HotelName:    "mockHotel",
+		HotelId:      uuid.New().String(),
+		FlightId:     uuid.New().String(),
+		AirlineName:  "cheap-airline",
+		BookingState: booking.PaymentPending,
+	}
 	// this suit is ordered be carful!
 	It("event is inserted into table", func() {
 		actual, err := repo.Insert(&event)
