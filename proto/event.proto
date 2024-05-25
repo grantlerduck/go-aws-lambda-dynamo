@@ -1,7 +1,7 @@
 syntax = "proto3";
 package proto;
 
-option go_package = "github.com/grantlerduck/go-was-lambda-dyanmo/domain/bookingpb";
+option go_package = "github.com/grantlerduck/go-aws-lambda-dynamo/domain/bookingpb";
 
 message Event {
   string booking_id = 1;
@@ -9,9 +9,10 @@ message Event {
   int64 from_epoch_millis = 3;
   int64 to_epoch_millis = 4;
   string hotel_name = 5;
-  string flight_id = 6;
-  string airline_name = 7;
-  State booking_state = 8;
+  string hotel_id = 6;
+  string flight_id = 7;
+  string airline_name = 8;
+  State booking_state = 9;
 }
 
 enum State {

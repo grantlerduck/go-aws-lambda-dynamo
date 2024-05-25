@@ -4,40 +4,36 @@ import (
 	"context"
 	"errors"
 	"github.com/google/uuid"
-	"github.com/grantlerduck/go-was-lambda-dyanmo/lib/domain/booking"
+	"github.com/grantlerduck/go-aws-lambda-dynamo/internal/domain/booking"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"time"
+	"go.uber.org/zap"
 )
 
 var _ = Describe("Main handler function", func() {
 	ctx := context.Background()
+	loggerDev, _ := zap.NewDevelopment()
 	When("event not nil", func() {
-		var event = booking.Event{
-			BookingId:    uuid.New().String(),
-			UserId:       uuid.New().String(),
-			TripFrom:     time.RFC3339,
-			TripUntil:    time.RFC3339,
-			HotelName:    "mockHotel",
-			HotelId:      uuid.New().String(),
-			FlightId:     uuid.New().String(),
-			AirlineName:  "cheap-airline",
-			BookingState: "booking-fee-pending",
+		var event = booking.EventMessage{
+			Key:     uuid.New().String(),
+			Tenant:  "eu",
+			Origin:  "marketplace",
+			Payload: "somepayload",
 		}
-		expectedBookingId := event.BookingId
+		expectedKey := event.Key
 		When("no error in processor", func() {
 			It("handles event correctly", func() {
 				processor := MockEventProcessor{}
-				handler := BookingHandler{&processor, logger}
+				handler := BookingHandler{&processor, loggerDev}
 				result, err := handler.HandleRequest(ctx, &event)
 				Expect(err).ShouldNot(HaveOccurred())
-				Expect(result).To(Equal(&expectedBookingId))
+				Expect(result).To(Equal(&expectedKey))
 			})
 		})
 		When("processing error", func() {
 			It("returns FailedToProcessError", func() {
 				processor := MockEventFailProcessor{}
-				handler := BookingHandler{&processor, logger}
+				handler := BookingHandler{&processor, loggerDev}
 				_, err := handler.HandleRequest(ctx, &event)
 				expectedProcessingError := FailedToProcessError{event}
 				Expect(err).Should(MatchError(&expectedProcessingError))
@@ -48,7 +44,7 @@ var _ = Describe("Main handler function", func() {
 	When("event nil", func() {
 		It("returns error EventNilError", func() {
 			processor := MockEventProcessor{}
-			handler := BookingHandler{&processor, logger}
+			handler := BookingHandler{&processor, loggerDev}
 			_, err := handler.HandleRequest(ctx, nil)
 			expectedNilError := EventNilError{}
 			Expect(err).Should(MatchError(&expectedNilError))
@@ -60,13 +56,13 @@ var _ = Describe("Main handler function", func() {
 type MockEventProcessor struct {
 }
 
-func (ep *MockEventProcessor) Process(event *booking.Event) (*booking.Event, error) {
-	return event, nil
+func (ep *MockEventProcessor) Process(event *booking.EventMessage) (*booking.Event, error) {
+	return &booking.Event{BookingId: event.Key}, nil
 }
 
 type MockEventFailProcessor struct {
 }
 
-func (ep *MockEventFailProcessor) Process(event *booking.Event) (*booking.Event, error) {
+func (ep *MockEventFailProcessor) Process(event *booking.EventMessage) (*booking.Event, error) {
 	return nil, errors.New("boom")
 }

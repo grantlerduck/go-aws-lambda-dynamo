@@ -1,4 +1,4 @@
-package dynamo_test
+package booking
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestDynamo(t *testing.T) {
+func TestBookingDomain(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Dynamo Suite")
+	RunSpecs(t, "Booking Domain Suite")
 }

@@ -3,7 +3,7 @@ package dynamo
 import (
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/google/uuid"
-	"github.com/grantlerduck/go-was-lambda-dyanmo/lib/domain/booking"
+	"github.com/grantlerduck/go-aws-lambda-dynamo/internal/domain/booking"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"
@@ -13,6 +13,7 @@ import (
 var _ = Describe("Given booking event", func() {
 	When("has valid state", func() {
 		event := booking.Event{
+			EventId:      uuid.New().String(),
 			BookingId:    uuid.New().String(),
 			UserId:       uuid.New().String(),
 			TripFrom:     time.RFC3339,
@@ -21,13 +22,13 @@ var _ = Describe("Given booking event", func() {
 			HotelId:      uuid.New().String(),
 			FlightId:     uuid.New().String(),
 			AirlineName:  "cheap-airline",
-			BookingState: "booking-fee-pending",
+			BookingState: booking.PaymentPending,
 		}
 		expectedResult := Item{
-			Pk:          uuid.New().String(),
+			Pk:          event.EventId,
 			Sk:          event.BookingId,
 			Gsi1Pk:      event.BookingId,
-			EventId:     uuid.New().String(),
+			EventId:     event.EventId,
 			BookingId:   event.BookingId,
 			UserId:      event.UserId,
 			TripFrom:    event.TripFrom,
@@ -36,7 +37,7 @@ var _ = Describe("Given booking event", func() {
 			HotelId:     event.HotelId,
 			FlightId:    event.FlightId,
 			AirlineName: event.AirlineName,
-			State:       PaymentPending,
+			State:       booking.PaymentPending,
 		}
 		It("maps to dyanmo item with meaningful state", func() {
 			result := new(Item).fromDomainBooking(&event)
@@ -74,7 +75,7 @@ var _ = Describe("Given dynamo item", func() {
 		HotelId:     uuid.New().String(),
 		FlightId:    uuid.New().String(),
 		AirlineName: "cheap-airline",
-		State:       PaymentPending,
+		State:       booking.PaymentPending,
 	}
 	When("marshaled to dynamo json", func() {
 		itemJson, marshallErr := attributevalue.MarshalMap(item)
@@ -90,6 +91,7 @@ var _ = Describe("Given dynamo item", func() {
 	})
 	When("mapped to domain", func() {
 		expectedDomainEvent := booking.Event{
+			EventId:      item.EventId,
 			BookingId:    item.BookingId,
 			UserId:       item.UserId,
 			TripFrom:     item.TripFrom,
@@ -98,7 +100,7 @@ var _ = Describe("Given dynamo item", func() {
 			HotelId:      item.HotelId,
 			FlightId:     item.FlightId,
 			AirlineName:  item.AirlineName,
-			BookingState: item.State.String(),
+			BookingState: item.State,
 		}
 		It("equals expected", func() {
 			actual := item.toBookingDomain()
