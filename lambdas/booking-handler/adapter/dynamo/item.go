@@ -1,7 +1,7 @@
 package dynamo
 
 import (
-	"github.com/grantlerduck/go-aws-lambda-dynamo/internal/domain/booking"
+	"github.com/grantlerduck/go-aws-lambda-dynamo/lambdas/booking-handler/domain/booking"
 )
 
 const (

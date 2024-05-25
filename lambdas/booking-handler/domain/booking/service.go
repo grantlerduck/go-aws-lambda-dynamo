@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/google/uuid"
-	bookingpb "github.com/grantlerduck/go-aws-lambda-dynamo/proto"
+	bookingpb "github.com/grantlerduck/go-aws-lambda-dynamo/lambdas/booking-handler/proto"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 	"time"

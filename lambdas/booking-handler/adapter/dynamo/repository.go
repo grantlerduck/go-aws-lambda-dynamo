@@ -6,7 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-	"github.com/grantlerduck/go-aws-lambda-dynamo/internal/domain/booking"
+	"github.com/grantlerduck/go-aws-lambda-dynamo/lambdas/booking-handler/domain/booking"
 	"go.uber.org/zap"
 )
 

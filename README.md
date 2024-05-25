@@ -36,7 +36,7 @@ Coming Soon
 The booking event lambda receives a json message with a base64 encoded bytestring, the payload, which is parsed to the bookingpb.Event.
 The code is generated with protoc and the go compiler plugin as follows:
 ```bash 
- protoc --go_out=paths=source_relative:. proto/*proto
+ protoc --go_out=paths=source_relative:. lambda/proto/*proto
 ```
 
 ## Testing

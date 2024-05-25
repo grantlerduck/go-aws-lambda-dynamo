@@ -1,7 +1,7 @@
 package booking
 
 import (
-	bookingpb "github.com/grantlerduck/go-aws-lambda-dynamo/proto"
+	bookingpb "github.com/grantlerduck/go-aws-lambda-dynamo/lambdas/booking-handler/proto"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )

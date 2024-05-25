@@ -11,7 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/docker/go-connections/nat"
 	"github.com/google/uuid"
-	"github.com/grantlerduck/go-aws-lambda-dynamo/internal/domain/booking"
+	"github.com/grantlerduck/go-aws-lambda-dynamo/lambdas/booking-handler/domain/booking"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/testcontainers/testcontainers-go"
