@@ -26,7 +26,8 @@ Coming Soon
 
 ## Setup
 * Install go modules required for local development
-* Install gotestsum `go install gotest.tools/gotestsum@latest` (foe test reports in CI tools)
+* Install gotestsum `go install gotest.tools/gotestsum@latest` (for test reports in CI tools)
+* Install golangci-lint `go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest` 
 * Install or update ginkgo `go install github.com/onsi/ginkgo/v2/ginkgo`
 * Install or update vuln checker `go install golang.org/x/vuln/cmd/govulncheck@latest`
 * Install proto compiler `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest`

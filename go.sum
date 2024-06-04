@@ -10,10 +10,10 @@ github.com/Microsoft/go-winio v0.6.1 h1:9/kr64B9VUZrLm5YYwbGtUJnMgqWVOdUAXu6Migc
 github.com/Microsoft/go-winio v0.6.1/go.mod h1:LRdKpFKfdobln8UmuiYcKPot9D2v6svN5+sAH+4kjUM=
 github.com/Microsoft/hcsshim v0.12.0 h1:rbICA+XZFwrBef2Odk++0LjFvClNCJGRK+fsrP254Ts=
 github.com/Microsoft/hcsshim v0.12.0/go.mod h1:RZV12pcHCXQ42XnlQ3pz6FZfmrC1C+R4gaOHhRNML1g=
-github.com/aws/aws-cdk-go/awscdk/v2 v2.143.0 h1:GCR4I+QO+WiqRfVlV5AtTATcFR0G6UIr5GZCTk6l2nI=
-github.com/aws/aws-cdk-go/awscdk/v2 v2.143.0/go.mod h1:7rswaSZojSkJxGV01/Ke7WPS0zHbr+dx/jLAVThceZg=
-github.com/aws/aws-cdk-go/awscdklambdagoalpha/v2 v2.143.0-alpha.0 h1:FN9RNCfKeXWBX42igsc29Lj8OIweNy8GvycNSyUtE4M=
-github.com/aws/aws-cdk-go/awscdklambdagoalpha/v2 v2.143.0-alpha.0/go.mod h1:tZaiuVxesVhBaCUxyvkWOfbr9xvrEnfopn3uAQwt858=
+github.com/aws/aws-cdk-go/awscdk/v2 v2.144.0 h1:GHOv7aI8UQp5tqf2D6KHJ4ZJEv3mMhkA8tdrkbxjmHE=
+github.com/aws/aws-cdk-go/awscdk/v2 v2.144.0/go.mod h1:7rswaSZojSkJxGV01/Ke7WPS0zHbr+dx/jLAVThceZg=
+github.com/aws/aws-cdk-go/awscdklambdagoalpha/v2 v2.144.0-alpha.0 h1:Dl5V1dC65yn+A5Qj3xx2fk7jRyDVsekwWaNS/IM1+x4=
+github.com/aws/aws-cdk-go/awscdklambdagoalpha/v2 v2.144.0-alpha.0/go.mod h1:5pwAK5LNYzr4orFAX+fraLteCSfHX6G+u7fv5ALbB7Q=
 github.com/aws/aws-lambda-go v1.47.0 h1:0H8s0vumYx/YKs4sE7YM0ktwL2eWse+kfopsRI1sXVI=
 github.com/aws/aws-lambda-go v1.47.0/go.mod h1:dpMpZgvWx5vuQJfBt0zqBha60q7Dd7RfgJv23DymV8A=
 github.com/aws/aws-sdk-go-v2 v1.26.1 h1:5554eUqIYVWpU0YmeeYZ0wU64H2VLBs8TlhRB2L+EkA=

@@ -1,9 +1,9 @@
 module github.com/grantlerduck/go-aws-lambda-dynamo
 
-go 1.22.2
+go 1.21.11
 
 require (
-	github.com/aws/aws-cdk-go/awscdk/v2 v2.143.0
+	github.com/aws/aws-cdk-go/awscdk/v2 v2.144.0
 	github.com/aws/aws-lambda-go v1.47.0
 	github.com/aws/aws-sdk-go-v2 v1.26.1
 	github.com/aws/aws-sdk-go-v2/config v1.27.11
@@ -28,7 +28,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.2.1 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/Microsoft/hcsshim v0.12.0 // indirect
-	github.com/aws/aws-cdk-go/awscdklambdagoalpha/v2 v2.143.0-alpha.0
+	github.com/aws/aws-cdk-go/awscdklambdagoalpha/v2 v2.144.0-alpha.0
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.1 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.5 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.5 // indirect

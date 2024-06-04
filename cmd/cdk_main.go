@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
@@ -11,10 +12,15 @@ import (
 func main() {
 	defer jsii.Close()
 	app := awscdk.NewApp(nil)
-	stacks.NewAppStack(app, "CdkStack", &stacks.AppStackProps{
+	service := "go-aws-lambda-dynamo"
+	group := "grantlerduck"
+	stacks.NewPipelineStack(app, fmt.Sprintf("%s-pipeline-stack", service), &stacks.PipelineStackProps{
 		StackProps: awscdk.StackProps{
 			Env: env(),
 		},
+		PipelineName: fmt.Sprintf("%s-pipeline", service),
+		RepositoryName: fmt.Sprintf("%s/%s", group, service),
+		ServiceName: service,
 	})
 
 	app.Synth(nil)
@@ -22,8 +28,7 @@ func main() {
 
 func env() *awscdk.Environment {
 	return &awscdk.Environment{
-		//Account: jsii.String(os.Getenv("CDK_DEFAULT_ACCOUNT")),
-		Account: jsii.String("12345678912"),
+		Account: jsii.String(os.Getenv("CDK_DEFAULT_ACCOUNT")),
 		Region:  jsii.String(os.Getenv("CDK_DEFAULT_REGION")),
 	}
 }
