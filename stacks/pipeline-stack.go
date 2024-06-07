@@ -56,6 +56,9 @@ func NewPipelineStack(scope constructs.Construct, id string, props *PipelineStac
 		SynthCodeBuildDefaults: &pipelines.CodeBuildOptions{
 			BuildEnvironment: defaultBuildEnv(),
 			PartialBuildSpec: defaultBuildRuntimes(),
+			Cache: awscodebuild.Cache_Bucket(cacheBucket, &awscodebuild.BucketCacheOptions{
+				Prefix: jsii.String("main/synth"),
+			}),
 		},
 		Synth: pipelines.NewShellStep(jsii.String("Synth"), &pipelines.ShellStepProps{
 			Input: pipelines.CodePipelineSource_Connection(jsii.String(props.RepositoryName), jsii.String("main"), &pipelines.ConnectionSourceOptions{
@@ -86,7 +89,10 @@ func NewPipelineStack(scope constructs.Construct, id string, props *PipelineStac
 			jsii.String("echo $GOPATH"),
 			jsii.String("echo $PWD"),
 		},
-		Cache: awscodebuild.Cache_Bucket(cacheBucket, nil),
+		// https://aws.amazon.com/blogs/devops/how-to-enable-caching-for-aws-codebuild/
+		Cache: awscodebuild.Cache_Bucket(cacheBucket, &awscodebuild.BucketCacheOptions{
+			Prefix: jsii.String("main/test-and-build"),
+		}),
 	})
 	wave.AddPost(buildStep)
 

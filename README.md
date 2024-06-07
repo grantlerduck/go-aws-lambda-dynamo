@@ -42,7 +42,10 @@ The code is generated with protoc and the go compiler plugin as follows:
 
 ## Testing
 
-Simply run the test script to execute linting and test execution with reports
+The tests include unit and integrations in a BDD manner.
+For the integration tests testcontainers is used to easily automate the container lifetime during test suites.
+
+To execute all tests and reports simply run the test script to execute linting and test execution with reportsTo run
 ```bash
 ./test.sh
 ```
@@ -73,6 +76,17 @@ ginkgo bootstrap
 
 Checkout ginkgo [documentation](https://onsi.github.io/ginkgo/) for more details.
 
+## Colima and Testcontainers
+
+If you have a Mac you might be using colima since docker desktop requires a license.
+Make sure to correclty configure colima:
+
+```
+export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
+export DOCKER_HOST="unix://${HOME}/.colima/docker.sock"
+```
+
+
 ## Vulnerability Checks
 
 install vulnerability checker 
@@ -93,3 +107,4 @@ govulncheck ./...
 * `cdk synth`       emits the synthesized CloudFormation template
 * `go mod tidy`     remove unused go modules
 * `go mod download` install go modules
+* `go get -u ./...` update all dependencies recursive 
