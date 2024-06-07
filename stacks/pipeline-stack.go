@@ -82,7 +82,7 @@ func NewPipelineStack(scope constructs.Construct, id string, props *PipelineStac
 		BuildEnvironment: defaultBuidEnv(),
 		PartialBuildSpec: defaultBuildRuntimes(),
 		Commands: &[]*string{
-			jsii.String("Hello World!"),
+			jsii.String("echo Hello World!"),
 		},
 		Cache: awscodebuild.Cache_Bucket(cacheBucket, nil),
 	})
