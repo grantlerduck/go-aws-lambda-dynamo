@@ -1,7 +1,6 @@
 package stacks
 
 import (
-	"github.com/aws/aws-cdk-go/awscdk/v2"
 	cdk "github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awscodebuild"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awscodepipeline"
@@ -35,27 +34,27 @@ func NewPipelineStack(scope constructs.Construct, id string, props *PipelineStac
 		LifecycleRules: &[]*awss3.LifecycleRule{
 			{
 				Enabled:    jsii.Bool(true),
-				Expiration: awscdk.Duration_Days(jsii.Number(7)),
+				Expiration: cdk.Duration_Days(jsii.Number(7)),
 			},
 		},
-		RemovalPolicy: awscdk.RemovalPolicy_DESTROY, // don't use this removal polcicy for real world scenarios unless you are really sure
+		RemovalPolicy: cdk.RemovalPolicy_DESTROY, // don't use this removal polcicy for real world scenarios unless you are really sure
 	})
 	cacheBucket := awss3.NewBucket(stack, jsii.String("CacheBucket"), &awss3.BucketProps{
 		EnforceSSL: jsii.Bool(true),
 		LifecycleRules: &[]*awss3.LifecycleRule{
 			{
 				Enabled:    jsii.Bool(true),
-				Expiration: awscdk.Duration_Days(jsii.Number(7)),
+				Expiration: cdk.Duration_Days(jsii.Number(7)),
 			},
 		},
-		RemovalPolicy: awscdk.RemovalPolicy_DESTROY, // don't use this removal polcicy for real world scenarios unless you are really sure
+		RemovalPolicy: cdk.RemovalPolicy_DESTROY, // don't use this removal polcicy for real world scenarios unless you are really sure
 	})
 
 	// the main pipeline
 	pipeline := pipelines.NewCodePipeline(stack, jsii.String("MainPipeline"), &pipelines.CodePipelineProps{
 		SelfMutation: jsii.Bool(true),
 		SynthCodeBuildDefaults: &pipelines.CodeBuildOptions{
-			BuildEnvironment: defaultBuidEnv(),
+			BuildEnvironment: defaultBuildEnv(),
 			PartialBuildSpec: defaultBuildRuntimes(),
 		},
 		Synth: pipelines.NewShellStep(jsii.String("Synth"), &pipelines.ShellStepProps{
@@ -79,10 +78,12 @@ func NewPipelineStack(scope constructs.Construct, id string, props *PipelineStac
 
 	wave := pipeline.AddWave(jsii.String("TestLambda"), nil)
 	buildStep := pipelines.NewCodeBuildStep(jsii.String("Test"), &pipelines.CodeBuildStepProps{
-		BuildEnvironment: defaultBuidEnv(),
+		BuildEnvironment: ubuntuBuildEnv(),
 		PartialBuildSpec: defaultBuildRuntimes(),
 		Commands: &[]*string{
-			jsii.String("echo Hello World!"),
+			jsii.String("go version"),
+			jsii.String("echo $GOPATH"),
+			jsii.String("echo $PWD"),
 		},
 		Cache: awscodebuild.Cache_Bucket(cacheBucket, nil),
 	})
@@ -98,9 +99,16 @@ func NewPipelineStack(scope constructs.Construct, id string, props *PipelineStac
 	return stack
 }
 
-func defaultBuidEnv() *awscodebuild.BuildEnvironment {
+func defaultBuildEnv() *awscodebuild.BuildEnvironment {
 	return &awscodebuild.BuildEnvironment{
 		BuildImage:  awscodebuild.LinuxBuildImage_AMAZON_LINUX_2_ARM_3(),
+		ComputeType: awscodebuild.ComputeType_SMALL,
+	}
+}
+
+func ubuntuBuildEnv() *awscodebuild.BuildEnvironment {
+	return &awscodebuild.BuildEnvironment{
+		BuildImage:  awscodebuild.LinuxBuildImage_STANDARD_7_0(),
 		ComputeType: awscodebuild.ComputeType_SMALL,
 	}
 }
