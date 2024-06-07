@@ -24,7 +24,6 @@ func main() {
 		ServiceName: service,
 		ConnectionArnImport: "account-setup-github-connection-github-connection-arn",
 	})
-	print("Hello World!")
 
 	app.Synth(nil)
 }

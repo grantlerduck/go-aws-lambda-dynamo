@@ -82,6 +82,7 @@ func NewPipelineStack(scope constructs.Construct, id string, props *PipelineStac
 		PartialBuildSpec: defaultBuildRuntimes(),
 		Commands: &[]*string{
 			jsii.String("go version"),
+			jsii.String("go env GOCACHE"),
 			jsii.String("echo $GOPATH"),
 			jsii.String("echo $PWD"),
 		},
