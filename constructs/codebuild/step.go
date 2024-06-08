@@ -30,7 +30,7 @@ func NewGoLintStep(props GoStepProps) pipelines.CodeBuildStep {
 		}
 	}
 	return pipelines.NewCodeBuildStep(jsii.String("TestLint"), &pipelines.CodeBuildStepProps{
-		BuildEnvironment: NewUbuntuBuildEnv(),
+		BuildEnvironment: NewUbuntuBuildEnv(jsii.String("MEDIUM")),
 		PartialBuildSpec: NewDefaultBuildRuntimes(),
 		Commands:         cmds,
 		Cache: awscodebuild.Cache_Bucket(props.CacheBucket, &awscodebuild.BucketCacheOptions{
@@ -56,7 +56,7 @@ func NewGoTestReportStep(props GoStepProps) pipelines.CodeBuildStep {
 		}
 	}
 	return pipelines.NewCodeBuildStep(jsii.String("TestReport"), &pipelines.CodeBuildStepProps{
-		BuildEnvironment: NewDefaultBuildEnv(),
+		BuildEnvironment: NewDefaultBuildEnv(jsii.String("MEDIUM")),
 		PartialBuildSpec: NewDefaultBuildRuntimes(),
 		Commands:         cmds,
 		Cache: awscodebuild.Cache_Bucket(props.CacheBucket, &awscodebuild.BucketCacheOptions{

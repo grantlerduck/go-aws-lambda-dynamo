@@ -1,18 +1,29 @@
 package codebuild
 
-import "github.com/aws/aws-cdk-go/awscdk/v2/awscodebuild"
+import (
+	"github.com/aws/aws-cdk-go/awscdk/v2/awscodebuild"
+	"github.com/aws/jsii-runtime-go"
+)
 
-func NewDefaultBuildEnv() *awscodebuild.BuildEnvironment {
+func NewDefaultBuildEnv(computType *string) *awscodebuild.BuildEnvironment {
+	var compType *string = computType
+	if compType == nil {
+		compType = jsii.String("SMALL")
+	}
 	return &awscodebuild.BuildEnvironment{
 		BuildImage:  awscodebuild.LinuxBuildImage_AMAZON_LINUX_2_ARM_3(),
-		ComputeType: awscodebuild.ComputeType_SMALL,
+		ComputeType: awscodebuild.ComputeType(*compType),
 	}
 }
 
-func NewUbuntuBuildEnv() *awscodebuild.BuildEnvironment {
+func NewUbuntuBuildEnv(computType *string) *awscodebuild.BuildEnvironment {
+	var compType *string = computType
+	if compType == nil {
+		compType = jsii.String("SMALL")
+	}
 	return &awscodebuild.BuildEnvironment{
 		BuildImage:  awscodebuild.LinuxBuildImage_STANDARD_7_0(),
-		ComputeType: awscodebuild.ComputeType_SMALL,
+		ComputeType: awscodebuild.ComputeType(*compType),
 	}
 }
 
