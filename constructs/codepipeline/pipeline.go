@@ -43,7 +43,7 @@ func NewGoV2MainPipeline(scope constructs.Construct, id string, props GoPipeline
 		},
 		CodePipeline: awscodepipeline.NewPipeline(scope, jsii.Sprintf("%sPipeline", id), &awscodepipeline.PipelineProps{
 			PipelineType:   awscodepipeline.PipelineType_V2,
-			PipelineName:   jsii.Sprintf("%s-pipeline", props.ServiceName),
+			PipelineName:   jsii.Sprintf("%s-main-pipeline", props.ServiceName),
 			ArtifactBucket: props.ArtifactBucket,
 			ExecutionMode:  awscodepipeline.ExecutionMode_QUEUED,
 		}),
@@ -92,7 +92,7 @@ func NewGoV2BranchPipeline(scope constructs.Construct, id string, props GoPipeli
 		},
 		CodePipeline: awscodepipeline.NewPipeline(scope, jsii.Sprintf("%sPipeline", id), &awscodepipeline.PipelineProps{
 			PipelineType:   awscodepipeline.PipelineType_V2,
-			PipelineName:   jsii.Sprintf("%s-branch-pipeline", props.ServiceName),
+			PipelineName:   jsii.Sprintf("%s-branch-pr-pipeline", props.ServiceName),
 			ArtifactBucket: props.ArtifactBucket,
 			ExecutionMode:  awscodepipeline.ExecutionMode_PARALLEL,
 		}),
