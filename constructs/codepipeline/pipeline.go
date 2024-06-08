@@ -143,7 +143,6 @@ func addPRTrigger(pipeline pipelines.CodePipeline) {
 								jsii.String("feature/**"),
 								jsii.String("chore/**"),
 								jsii.String("chore*"),
-								jsii.String("rc*"),
 							},
 							Events: &[]awscodepipeline.GitPullRequestEvent{
 								awscodepipeline.GitPullRequestEvent_OPEN,
