@@ -29,21 +29,22 @@ type DeployableStage struct {
 const (
 	MAIN_BRANCH = "main"
 	BRANCHES    = "dev/*,feat/*,chore/*"
+	BRANCH      = "branch"
 )
 
-func NewGoV2MainPipeline(scope constructs.Construct, props GoPipelineProps) pipelines.CodePipeline {
-	mainPipeline := pipelines.NewCodePipeline(scope, jsii.String("MainPipeline"), &pipelines.CodePipelineProps{
+func NewGoV2MainPipeline(scope constructs.Construct, id string, props GoPipelineProps) pipelines.CodePipeline {
+	mainPipeline := pipelines.NewCodePipeline(scope, jsii.String(id), &pipelines.CodePipelineProps{
 		SelfMutation: jsii.Bool(true),
 		SynthCodeBuildDefaults: &pipelines.CodeBuildOptions{
 			BuildEnvironment: codebuild.NewDefaultBuildEnv(nil, jsii.Bool(false)),
 			PartialBuildSpec: codebuild.NewDefaultBuildRuntimes(),
 			Cache: awscodebuild.Cache_Bucket(props.CacheBucket, &awscodebuild.BucketCacheOptions{
-				Prefix: jsii.String("main/synth"),
+				Prefix: jsii.Sprintf("%s/synth", MAIN_BRANCH),
 			}),
 		},
 		Synth: codebuild.NewGoSynthStep(codebuild.GoSynthStepProps{
 			ConnectionArn:   props.ConnectionArn,
-			TriggerBranches: "main",
+			TriggerBranches: MAIN_BRANCH,
 			RepoName:        props.RepoName,
 			Commands:        nil,
 		}),
@@ -54,12 +55,12 @@ func NewGoV2MainPipeline(scope constructs.Construct, props GoPipelineProps) pipe
 	testWave := mainPipeline.AddWave(jsii.String("Test"), nil)
 	lintStep := codebuild.NewGoLintStep(codebuild.GoStepProps{
 		CacheBucket: props.CacheBucket,
-		CachePrefix: "main",
+		CachePrefix: MAIN_BRANCH,
 		Commands:    nil,
 	})
 	testStep := codebuild.NewGoTestReportStep(codebuild.GoStepProps{
 		CacheBucket: props.CacheBucket,
-		CachePrefix: "main",
+		CachePrefix: MAIN_BRANCH,
 		Commands:    nil,
 	})
 	testWave.AddPost(lintStep, testStep)
@@ -75,12 +76,56 @@ func NewGoV2MainPipeline(scope constructs.Construct, props GoPipelineProps) pipe
 	mainPipeline.BuildPipeline()
 	// use V2 pipeline since it is cheaper for things that just run occasionally
 	toV2Pipeline(mainPipeline)
-
 	return mainPipeline
+}
+
+func NewGoV2BranchPipeline(scope constructs.Construct, id string, props GoPipelineProps) pipelines.CodePipeline {
+	branchPipeline := pipelines.NewCodePipeline(scope, jsii.String(id), &pipelines.CodePipelineProps{
+		SelfMutation: jsii.Bool(false),
+		SynthCodeBuildDefaults: &pipelines.CodeBuildOptions{
+			BuildEnvironment: codebuild.NewDefaultBuildEnv(nil, jsii.Bool(false)),
+			PartialBuildSpec: codebuild.NewDefaultBuildRuntimes(),
+			Cache: awscodebuild.Cache_Bucket(props.CacheBucket, &awscodebuild.BucketCacheOptions{
+				Prefix: jsii.Sprintf("%s/synth", BRANCH),
+			}),
+		},
+		Synth: codebuild.NewGoSynthStep(codebuild.GoSynthStepProps{
+			ConnectionArn:   props.ConnectionArn,
+			TriggerBranches: BRANCHES,
+			RepoName:        props.RepoName,
+			Commands:        nil,
+		}),
+		ArtifactBucket: props.ArtifactBucket,
+		PipelineName:   jsii.Sprintf("%s-branch-pipeline", props.ServiceName),
+	})
+
+	testWave := branchPipeline.AddWave(jsii.String("Test"), nil)
+	lintStep := codebuild.NewGoLintStep(codebuild.GoStepProps{
+		CacheBucket: props.CacheBucket,
+		CachePrefix: BRANCH,
+		Commands:    nil,
+	})
+	testStep := codebuild.NewGoTestReportStep(codebuild.GoStepProps{
+		CacheBucket: props.CacheBucket,
+		CachePrefix: BRANCH,
+		Commands:    nil,
+	})
+	testWave.AddPost(lintStep, testStep)
+	branchPipeline.BuildPipeline()
+	// use V2 pipeline since it is cheaper for things that just run occasionally
+	toV2Pipeline(branchPipeline)
+	toParallelExecution(branchPipeline)
+	return branchPipeline
 }
 
 func toV2Pipeline(pipeline pipelines.CodePipeline) {
 	var cfnPipeline awscodepipeline.CfnPipeline
 	runtime.Get(interface{}(pipeline.Pipeline().Node()), "defaultChild", interface{}(&cfnPipeline))
 	cfnPipeline.AddPropertyOverride(jsii.String("PipelineType"), jsii.String("V2"))
+}
+
+func toParallelExecution(pipeline pipelines.CodePipeline) {
+	var cfnPipeline awscodepipeline.CfnPipeline
+	runtime.Get(interface{}(pipeline.Pipeline().Node()), "defaultChild", interface{}(&cfnPipeline))
+	cfnPipeline.AddPropertyOverride(jsii.String("ExecutionMode"), jsii.String("PARALLEL"))
 }

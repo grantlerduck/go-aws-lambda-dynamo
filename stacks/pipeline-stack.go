@@ -29,7 +29,15 @@ func NewPipelineStack(scope constructs.Construct, id string, props *PipelineStac
 	cacheBucket := s3.NewRemoveableBucket(stack, "CacheBucket")
 
 	// the main pipeline
-	codepipeline.NewGoV2MainPipeline(stack, codepipeline.GoPipelineProps{
+	codepipeline.NewGoV2MainPipeline(stack, "MainPipeline", codepipeline.GoPipelineProps{
+		ArtifactBucket: artifactBucket,
+		CacheBucket:    cacheBucket,
+		ConnectionArn:  githubConnectionArn,
+		ServiceName:    props.ServiceName,
+		RepoName:       props.RepositoryName,
+	})
+
+	codepipeline.NewGoV2BranchPipeline(stack, "BranchPipeline", codepipeline.GoPipelineProps{
 		ArtifactBucket: artifactBucket,
 		CacheBucket:    cacheBucket,
 		ConnectionArn:  githubConnectionArn,
