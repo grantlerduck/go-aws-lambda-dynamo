@@ -37,6 +37,7 @@ func NewPipelineStack(scope constructs.Construct, id string, props *PipelineStac
 		RepoName:       props.RepositoryName,
 	})
 
+	// the branch pipeline
 	codepipeline.NewGoV2BranchPipeline(stack, "BranchPipeline", codepipeline.GoPipelineProps{
 		ArtifactBucket: artifactBucket,
 		CacheBucket:    cacheBucket,
