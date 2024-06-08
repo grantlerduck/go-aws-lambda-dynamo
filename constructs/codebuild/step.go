@@ -26,7 +26,7 @@ func NewGoLintStep(props GoStepProps) pipelines.CodeBuildStep {
 		cmds = &[]*string{
 			jsii.String("export PATH=\"$GOPATH/bin:$PATH\""),
 			jsii.String("go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest"),
-			jsii.String("golangci-lint run -v --timeout=30s ./..."),
+			jsii.String("golangci-lint run -v --timeout=120s ./..."),
 		}
 	}
 	return pipelines.NewCodeBuildStep(jsii.String("TestLint"), &pipelines.CodeBuildStepProps{
@@ -56,7 +56,7 @@ func NewGoTestReportStep(props GoStepProps) pipelines.CodeBuildStep {
 		}
 	}
 	return pipelines.NewCodeBuildStep(jsii.String("TestReport"), &pipelines.CodeBuildStepProps{
-		BuildEnvironment: NewDefaultBuildEnv(jsii.String("LARGE")),
+		BuildEnvironment: NewDefaultBuildEnv(nil, jsii.Bool(true)),
 		PartialBuildSpec: NewDefaultBuildRuntimes(),
 		Commands:         cmds,
 		Cache: awscodebuild.Cache_Bucket(props.CacheBucket, &awscodebuild.BucketCacheOptions{

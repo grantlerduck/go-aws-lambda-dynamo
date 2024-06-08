@@ -5,7 +5,7 @@ import (
 	"github.com/aws/jsii-runtime-go"
 )
 
-func NewDefaultBuildEnv(computType *string) *awscodebuild.BuildEnvironment {
+func NewDefaultBuildEnv(computType *string, privelidged *bool) *awscodebuild.BuildEnvironment {
 	var compType *string = computType
 	if compType == nil {
 		compType = jsii.String("SMALL")
@@ -13,6 +13,7 @@ func NewDefaultBuildEnv(computType *string) *awscodebuild.BuildEnvironment {
 	return &awscodebuild.BuildEnvironment{
 		BuildImage:  awscodebuild.LinuxBuildImage_AMAZON_LINUX_2_ARM_3(),
 		ComputeType: awscodebuild.ComputeType(*compType),
+		Privileged: privelidged,
 	}
 }
 

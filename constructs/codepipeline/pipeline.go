@@ -35,7 +35,7 @@ func NewGoV2MainPipeline(scope constructs.Construct, props GoPipelineProps) pipe
 	mainPipeline := pipelines.NewCodePipeline(scope, jsii.String("MainPipeline"), &pipelines.CodePipelineProps{
 		SelfMutation: jsii.Bool(true),
 		SynthCodeBuildDefaults: &pipelines.CodeBuildOptions{
-			BuildEnvironment: codebuild.NewDefaultBuildEnv(nil),
+			BuildEnvironment: codebuild.NewDefaultBuildEnv(nil, jsii.Bool(false)),
 			PartialBuildSpec: codebuild.NewDefaultBuildRuntimes(),
 			Cache: awscodebuild.Cache_Bucket(props.CacheBucket, &awscodebuild.BucketCacheOptions{
 				Prefix: jsii.String("main/synth"),
