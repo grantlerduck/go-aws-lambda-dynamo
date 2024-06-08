@@ -38,13 +38,13 @@ var _ = Describe("Given event repository", Ordered, func() {
 			ctx,
 			testcontainers.WithImage(localstackImage),
 		)
-		time.Sleep(10 * time.Second)
+		time.Sleep(5 * time.Second)
 		Expect(err).ShouldNot(HaveOccurred())
 		port, err = localStackContainer.MappedPort(context.Background(), portProtocol)
 		Expect(err).ShouldNot(HaveOccurred())
 		dynamoClientLocal, err = createDynamoLocalClient(port)
 		Expect(err).ShouldNot(HaveOccurred())
-		time.Sleep(20 * time.Second)
+		time.Sleep(5 * time.Second)
 		err = createEventTable(dynamoClientLocal, testTable)
 		Expect(err).ShouldNot(HaveOccurred())
 		repo = NewLocalEventRepository(dynamoClientLocal, testTable, logger)
