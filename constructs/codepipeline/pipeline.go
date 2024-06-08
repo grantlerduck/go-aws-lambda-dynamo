@@ -102,7 +102,7 @@ func NewGoV2BranchPipeline(scope constructs.Construct, id string, props GoPipeli
 			TriggerBranches: DEV_BRANCH,
 			RepoName:        props.RepoName,
 			Commands:        nil,
-			TriggerOnPush:   false,
+			TriggerOnPush:   true,
 		}),
 	})
 
