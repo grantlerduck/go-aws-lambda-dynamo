@@ -102,7 +102,7 @@ func NewGoV2BranchPipeline(scope constructs.Construct, id string, props GoPipeli
 			TriggerBranches: DEV_BRANCH,
 			RepoName:        props.RepoName,
 			Commands:        nil,
-			TriggerOnPush:   false,
+			TriggerOnPush:   true,
 		}),
 	})
 
@@ -148,6 +148,18 @@ func addPRTrigger(pipeline pipelines.CodePipeline) {
 								awscodepipeline.GitPullRequestEvent_OPEN,
 								awscodepipeline.GitPullRequestEvent_UPDATED,
 							},
+						},
+					},
+					PushFilter: &[]*awscodepipeline.GitPushFilter{
+						{
+							TagsIncludes: &[]*string{
+								jsii.String("dev*"),
+								jsii.String("dev/**"),
+								jsii.String("feat/**"),
+								jsii.String("feature/**"),
+								jsii.String("chore/**"),
+								jsii.String("bug/**"),
+								jsii.String("rc/**")},
 						},
 					},
 				},
