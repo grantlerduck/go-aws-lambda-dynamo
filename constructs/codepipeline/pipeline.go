@@ -8,7 +8,6 @@ import (
 	"github.com/aws/aws-cdk-go/awscdk/v2/pipelines"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
-	"github.com/aws/jsii-runtime-go/runtime"
 	"github.com/grantlerduck/go-aws-lambda-dynamo/constructs/codebuild"
 )
 
@@ -28,7 +27,7 @@ type DeployableStage struct {
 
 const (
 	MAIN_BRANCH = "main"
-	BRANCHES    = "dev/*,feat/*,chore/*"
+	DEV_BRANCH  = "dev"
 	BRANCH      = "branch"
 )
 
@@ -42,14 +41,18 @@ func NewGoV2MainPipeline(scope constructs.Construct, id string, props GoPipeline
 				Prefix: jsii.Sprintf("%s/synth", MAIN_BRANCH),
 			}),
 		},
+		CodePipeline: awscodepipeline.NewPipeline(scope, jsii.Sprintf("%sPipeline", id), &awscodepipeline.PipelineProps{
+			PipelineType:   awscodepipeline.PipelineType_V2,
+			PipelineName:   jsii.Sprintf("%s-pipeline", props.ServiceName),
+			ArtifactBucket: props.ArtifactBucket,
+			ExecutionMode:  awscodepipeline.ExecutionMode_QUEUED,
+		}),
 		Synth: codebuild.NewGoSynthStep(codebuild.GoSynthStepProps{
 			ConnectionArn:   props.ConnectionArn,
 			TriggerBranches: MAIN_BRANCH,
 			RepoName:        props.RepoName,
 			Commands:        nil,
 		}),
-		ArtifactBucket: props.ArtifactBucket,
-		PipelineName:   jsii.Sprintf("%s-pipeline", props.ServiceName),
 	})
 
 	testWave := mainPipeline.AddWave(jsii.String("Test"), nil)
@@ -74,8 +77,6 @@ func NewGoV2MainPipeline(scope constructs.Construct, id string, props GoPipeline
 	}
 
 	mainPipeline.BuildPipeline()
-	// use V2 pipeline since it is cheaper for things that just run occasionally
-	toV2Pipeline(mainPipeline)
 	return mainPipeline
 }
 
@@ -89,14 +90,18 @@ func NewGoV2BranchPipeline(scope constructs.Construct, id string, props GoPipeli
 				Prefix: jsii.Sprintf("%s/synth", BRANCH),
 			}),
 		},
+		CodePipeline: awscodepipeline.NewPipeline(scope, jsii.Sprintf("%sPipeline", id), &awscodepipeline.PipelineProps{
+			PipelineType:   awscodepipeline.PipelineType_V2,
+			PipelineName:   jsii.Sprintf("%s-branch-pipeline", props.ServiceName),
+			ArtifactBucket: props.ArtifactBucket,
+			ExecutionMode:  awscodepipeline.ExecutionMode_PARALLEL,
+		}),
 		Synth: codebuild.NewGoSynthStep(codebuild.GoSynthStepProps{
 			ConnectionArn:   props.ConnectionArn,
-			TriggerBranches: BRANCHES,
+			TriggerBranches: DEV_BRANCH,
 			RepoName:        props.RepoName,
 			Commands:        nil,
 		}),
-		ArtifactBucket: props.ArtifactBucket,
-		PipelineName:   jsii.Sprintf("%s-branch-pipeline", props.ServiceName),
 	})
 
 	testWave := branchPipeline.AddWave(jsii.String("Test"), nil)
@@ -112,20 +117,39 @@ func NewGoV2BranchPipeline(scope constructs.Construct, id string, props GoPipeli
 	})
 	testWave.AddPost(lintStep, testStep)
 	branchPipeline.BuildPipeline()
-	// use V2 pipeline since it is cheaper for things that just run occasionally
-	toV2Pipeline(branchPipeline)
-	toParallelExecution(branchPipeline)
+	addPRTrigger(branchPipeline)
 	return branchPipeline
 }
 
-func toV2Pipeline(pipeline pipelines.CodePipeline) {
-	var cfnPipeline awscodepipeline.CfnPipeline
-	runtime.Get(interface{}(pipeline.Pipeline().Node()), "defaultChild", interface{}(&cfnPipeline))
-	cfnPipeline.AddPropertyOverride(jsii.String("PipelineType"), jsii.String("V2"))
-}
-
-func toParallelExecution(pipeline pipelines.CodePipeline) {
-	var cfnPipeline awscodepipeline.CfnPipeline
-	runtime.Get(interface{}(pipeline.Pipeline().Node()), "defaultChild", interface{}(&cfnPipeline))
-	cfnPipeline.AddPropertyOverride(jsii.String("ExecutionMode"), jsii.String("PARALLEL"))
+func addPRTrigger(pipeline pipelines.CodePipeline) {
+	sourceStage := pipeline.Pipeline().Stage(jsii.String("Source"))
+	actions := sourceStage.Actions()
+	if actions != nil {
+		acts := (*actions)
+		if len(acts) > 0 {
+			sourceAction := acts[0]
+			pipeline.Pipeline().AddTrigger(&awscodepipeline.TriggerProps{
+				ProviderType: awscodepipeline.ProviderType_CODE_STAR_SOURCE_CONNECTION,
+				GitConfiguration: &awscodepipeline.GitConfiguration{
+					SourceAction: sourceAction,
+					PullRequestFilter: &[]*awscodepipeline.GitPullRequestFilter{
+						{
+							BranchesIncludes: &[]*string{
+								jsii.String("dev"),
+								jsii.String("dev/*"),
+								jsii.String("feat/*"),
+								jsii.String("feature/*"),
+								jsii.String("chore/*"),
+								jsii.String("bug/*"),
+								jsii.String("rc/*")},
+							Events: &[]awscodepipeline.GitPullRequestEvent{
+								awscodepipeline.GitPullRequestEvent_OPEN,
+								awscodepipeline.GitPullRequestEvent_UPDATED,
+							},
+						},
+					},
+				},
+			})
+		}
+	}
 }
