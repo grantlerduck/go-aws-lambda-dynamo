@@ -135,7 +135,7 @@ func addPRTrigger(pipeline pipelines.CodePipeline) {
 					PullRequestFilter: &[]*awscodepipeline.GitPullRequestFilter{
 						{
 							BranchesIncludes: &[]*string{
-								jsii.String("dev**"),
+								jsii.String("dev*"),
 								jsii.String("dev/**"),
 								jsii.String("feat/**"),
 								jsii.String("feature/**"),
