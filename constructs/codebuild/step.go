@@ -18,6 +18,7 @@ type GoSynthStepProps struct {
 	RepoName        string
 	TriggerBranches string
 	Commands        *[]*string
+	TriggerOnPush	bool
 }
 
 func NewGoLintStep(props GoStepProps) pipelines.CodeBuildStep {
@@ -79,7 +80,7 @@ func NewGoSynthStep(props GoSynthStepProps) pipelines.ShellStep {
 	return pipelines.NewShellStep(jsii.String("Synth"), &pipelines.ShellStepProps{
 		Input: pipelines.CodePipelineSource_Connection(jsii.String(props.RepoName), jsii.String(props.TriggerBranches), &pipelines.ConnectionSourceOptions{
 			ConnectionArn: props.ConnectionArn,
-			TriggerOnPush: jsii.Bool(true),
+			TriggerOnPush: jsii.Bool(props.TriggerOnPush),
 		}),
 		Commands: cmds,
 	})
