@@ -3,6 +3,7 @@ package dynamo
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -42,6 +43,7 @@ var _ = Describe("Given event repository", Ordered, func() {
 		Expect(err).ShouldNot(HaveOccurred())
 		dynamoClientLocal, err = createDynamoLocalClient(port)
 		Expect(err).ShouldNot(HaveOccurred())
+		time.Sleep(30 * time.Second)
 		err = createEventTable(dynamoClientLocal, testTable)
 		Expect(err).ShouldNot(HaveOccurred())
 		repo = NewLocalEventRepository(dynamoClientLocal, testTable, logger)
