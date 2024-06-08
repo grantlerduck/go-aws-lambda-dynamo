@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-cdk-go/awscdk/v2/pipelines"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
+	"github.com/aws/jsii-runtime-go/runtime"
 	"github.com/grantlerduck/go-aws-lambda-dynamo/constructs/codebuild"
 )
 
@@ -126,32 +127,41 @@ func NewGoV2BranchPipeline(scope constructs.Construct, id string, props GoPipeli
 func addPRTrigger(pipeline pipelines.CodePipeline) {
 	sourceStage := pipeline.Pipeline().Stage(jsii.String("Source"))
 	actions := sourceStage.Actions()
+	branches := &[]*string{
+		jsii.String("dev*"),
+		jsii.String("feat*"),
+		jsii.String("feat/*"),
+		jsii.String("chore*"),
+		jsii.String("chore/*"),
+		jsii.String("bug*"),
+		jsii.String("bug/*"),
+	}
 	if actions != nil {
 		acts := (*actions)
 		if len(acts) > 0 {
 			sourceAction := acts[0]
-			pipeline.Pipeline().AddTrigger(&awscodepipeline.TriggerProps{
-				ProviderType: awscodepipeline.ProviderType_CODE_STAR_SOURCE_CONNECTION,
-				GitConfiguration: &awscodepipeline.GitConfiguration{
-					SourceAction: sourceAction,
-					PullRequestFilter: &[]*awscodepipeline.GitPullRequestFilter{
-						{
-							BranchesIncludes: &[]*string{
-								jsii.String("dev*"),
-								jsii.String("dev/**"),
-								jsii.String("feat/**"),
-								jsii.String("feature/**"),
-								jsii.String("chore/**"),
-								jsii.String("bug/**"),
-								jsii.String("rc/**")},
-							Events: &[]awscodepipeline.GitPullRequestEvent{
-								awscodepipeline.GitPullRequestEvent_OPEN,
-								awscodepipeline.GitPullRequestEvent_UPDATED,
-							},
-						},
+			// pipeline.Pipeline().AddTrigger(&awscodepipeline.TriggerProps{
+			// 	ProviderType: awscodepipeline.ProviderType_CODE_STAR_SOURCE_CONNECTION,
+			// 	GitConfiguration: &awscodepipeline.GitConfiguration{
+			// 		SourceAction: sourceAction,
+			// 		PushFilter: &[]*awscodepipeline.GitPushFilter{{TagsIncludes: branches,},
+			// 		},
+			// 	},
+			// })
+			includes := &map[string]*[]*string{"Includes": branches}
+			branchConfig := &[]map[string]any{{"Branches": includes}}
+			override := &[]any{
+				&map[string]any{
+					"GitConfiguration": map[string]any{
+						"Push":             branchConfig,
+						"SourceActionName": sourceAction.ActionProperties().ActionName,
 					},
+					"ProviderType": jsii.String("CodeStarSourceConnection"),
 				},
-			})
+			}
+			var cfnPipeline awscodepipeline.CfnPipeline
+			runtime.Get(interface{}(pipeline.Pipeline().Node()), "defaultChild", interface{}(&cfnPipeline))
+			cfnPipeline.AddPropertyOverride(jsii.String("Triggers"), override)
 		}
 	}
 }
