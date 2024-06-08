@@ -30,4 +30,5 @@ go.work
 cdk.out
 /unit-tests.xml
 /coverage.html
+coverage.xml
 .vscode

@@ -19,7 +19,6 @@ func main() {
 		StackProps: awscdk.StackProps{
 			Env: env(),
 		},
-		PipelineName: fmt.Sprintf("%s-pipeline", service),
 		RepositoryName: fmt.Sprintf("%s/%s", group, service),
 		ServiceName: service,
 		ConnectionArnImport: "account-setup-github-connection-github-connection-arn",
