@@ -13,7 +13,7 @@ func NewDefaultBuildEnv(computType *string, privelidged *bool) *awscodebuild.Bui
 	return &awscodebuild.BuildEnvironment{
 		BuildImage:  awscodebuild.LinuxBuildImage_AMAZON_LINUX_2_ARM_3(),
 		ComputeType: awscodebuild.ComputeType(*compType),
-		Privileged: privelidged,
+		Privileged:  privelidged,
 	}
 }
 

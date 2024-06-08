@@ -26,7 +26,7 @@ func NewGoLintStep(props GoStepProps) pipelines.CodeBuildStep {
 		cmds = &[]*string{
 			jsii.String("export PATH=\"$GOPATH/bin:$PATH\""),
 			jsii.String("go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest"),
-			jsii.String("golangci-lint run -v --timeout=120s ./..."),
+			jsii.String("golangci-lint run -v --timeout=300s ./..."),
 		}
 	}
 	return pipelines.NewCodeBuildStep(jsii.String("TestLint"), &pipelines.CodeBuildStepProps{
