@@ -150,18 +150,6 @@ func addPRTrigger(pipeline pipelines.CodePipeline) {
 							},
 						},
 					},
-					PushFilter: &[]*awscodepipeline.GitPushFilter{
-						{
-							TagsIncludes: &[]*string{
-								jsii.String("dev*"),
-								jsii.String("dev/**"),
-								jsii.String("feat/**"),
-								jsii.String("feature/**"),
-								jsii.String("chore/**"),
-								jsii.String("bug/**"),
-								jsii.String("rc/**")},
-						},
-					},
 				},
 			})
 		}
