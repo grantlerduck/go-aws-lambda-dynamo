@@ -33,3 +33,5 @@ cdk.out
 coverage.xml
 .vscode
 event.json
+
+*.dot

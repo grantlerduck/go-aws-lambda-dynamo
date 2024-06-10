@@ -21,7 +21,7 @@ Hence, you will find javaish or pythonish patterns in the code. It has hard to g
 
 # AWS Infrastructure
 
-Coming Soon
+![alt text](diagram.png)
 
 
 ## Setup
