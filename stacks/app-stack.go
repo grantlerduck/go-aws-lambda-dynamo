@@ -38,7 +38,7 @@ func NewAppStack(scope constructs.Construct, id string, props *AppStackProps) cd
 			Architecture: awslambda.Architecture_ARM_64(),
 			LogRetention: awslogs.RetentionDays_ONE_DAY,
 			Entry:        jsii.String("lambdas/booking-handler"),
-			MemorySize:   jsii.Number(248),
+			MemorySize:   jsii.Number(640), // (128*5=640), more memory means more available bandwidth which is beneficial for read/write to s3
 			Timeout:      cdk.Duration_Seconds(jsii.Number(10)),
 			Environment: &map[string]*string{
 				"DYNAMO_BOOKING_TABLE_NAME": props.BookingEventsTableName,
