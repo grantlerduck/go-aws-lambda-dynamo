@@ -30,7 +30,7 @@ func NewPipelineStack(scope constructs.Construct, id string, props *PipelineStac
 
 	stage := NewBookingEventsLambdaStage(stack, props.StackProps)
 	deployAbleStages := []codepipeline.DeployableStage{
-		codepipeline.DeployableStage{Stage: stage, StageOptions: nil},
+		{Stage: stage, StageOptions: nil},
 	}
 
 	// the main pipeline
