@@ -38,7 +38,7 @@ var _ = Describe("Given booking service", func() {
 				evntMsg := EventMessage{Key: uuid.New().String(), Tenant: "eu", Origin: "marketplace", Payload: eventPayload}
 				// persist json for testin pruposes
 				eventJson, _ := json.Marshal(evntMsg)
-    			fileErr := os.WriteFile("event.json", eventJson, 0644)
+    			fileErr := os.WriteFile("../../../../event.json", eventJson, 0644)
 				Expect(fileErr).ShouldNot(HaveOccurred())
 				_, err := service.Process(&evntMsg) // the return value is mocked from the repo
 				Expect(err).ShouldNot(HaveOccurred())
