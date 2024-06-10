@@ -11,4 +11,10 @@ gotestsum --junitfile unit-tests.xml -- -coverprofile=cover.out -covermode count
 echo "Checking for vulnerabilities..."
 govulncheck ./...
 
+echo "Syntheizing app..."
+cdk synth >> /dev/null
+
+echo "Generating infrastructure diagram..."
+npx cdk-dia
+
 echo "Done"
