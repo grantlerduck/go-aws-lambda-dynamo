@@ -69,7 +69,7 @@ func NewGoV2MainPipeline(scope constructs.Construct, id string, props GoPipeline
 		Commands:    nil,
 	})
 	testWave.AddPost(lintStep, testStep)
-
+	
 	if len(props.Stages) > 0 {
 		deployWave := mainPipeline.AddWave(jsii.String("Deploy"), nil)
 		for _, stage := range props.Stages {
@@ -120,13 +120,13 @@ func NewGoV2BranchPipeline(scope constructs.Construct, id string, props GoPipeli
 	})
 	testWave.AddPost(lintStep, testStep)
 	branchPipeline.BuildPipeline()
-	addPRTrigger(branchPipeline)
+	addBranchTrigger(branchPipeline)
 	return branchPipeline
 }
 
 // adds a branch based trigger to the pipeline referencing the source action
 // workaround since aws cdk does not yet support push triggers 
-func addPRTrigger(pipeline pipelines.CodePipeline) {
+func addBranchTrigger(pipeline pipelines.CodePipeline) {
 	sourceStage := pipeline.Pipeline().Stage(jsii.String("Source"))
 	actions := sourceStage.Actions()
 	branches := &[]*string{

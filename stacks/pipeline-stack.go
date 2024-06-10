@@ -28,6 +28,11 @@ func NewPipelineStack(scope constructs.Construct, id string, props *PipelineStac
 	artifactBucket := s3.NewRemoveableBucket(stack, "ArtifactBucket")
 	cacheBucket := s3.NewRemoveableBucket(stack, "CacheBucket")
 
+	stage := NewBookingEventsLambdaStage(stack, props.StackProps)
+	deployAbleStages := []codepipeline.DeployableStage{
+		codepipeline.DeployableStage{Stage: stage, StageOptions: nil},
+	}
+
 	// the main pipeline
 	codepipeline.NewGoV2MainPipeline(stack, "MainExecutionPipeline", codepipeline.GoPipelineProps{
 		ArtifactBucket: artifactBucket,
@@ -35,6 +40,7 @@ func NewPipelineStack(scope constructs.Construct, id string, props *PipelineStac
 		ConnectionArn:  githubConnectionArn,
 		ServiceName:    props.ServiceName,
 		RepoName:       props.RepositoryName,
+		Stages:         deployAbleStages,
 	})
 
 	// the branch pipeline
