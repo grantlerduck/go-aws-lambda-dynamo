@@ -47,6 +47,7 @@ func NewGoV2MainPipeline(scope constructs.Construct, id string, props GoPipeline
 			PipelineName:   jsii.Sprintf("%s-main-pipeline", props.ServiceName),
 			ArtifactBucket: props.ArtifactBucket,
 			ExecutionMode:  awscodepipeline.ExecutionMode_QUEUED,
+			RestartExecutionOnUpdate: jsii.Bool(true),
 		}),
 		Synth: codebuild.NewGoSynthStep(codebuild.GoSynthStepProps{
 			ConnectionArn:   props.ConnectionArn,
