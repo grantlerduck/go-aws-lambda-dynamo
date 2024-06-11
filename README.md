@@ -1,4 +1,4 @@
-# go-aws-lambda-dynamo
+# go-aws-lambda-dynamo - a sample project
 
 AWS Lambda function using Go and DynamoDB.
 The lambda is implemented in hexagonal architecture (a slight overkill for such a small function).
@@ -18,6 +18,18 @@ However, it is a nice practice to get the concepts.
 
 Background: I am mainly a Kotlin/Spring Developer and AWS Cloud Architect with a DataSceince backround.
 Hence, you will find javaish or pythonish patterns in the code. It is hard to get rid of habbits :D
+
+## NOTES
+
+* Professionally I have implement various go based ops automation, mainly for CI/CD or similar but I would like to write bigger projects with Go in the future since I really enjoy the simplicity (vs Spring Boot bloated applications)
+* AWS CDK for go does not make much sense to me since TypeScript is required anyways and I am used to AWS CDk Typescript for IaC (and having a look at Terraform CDK)
+* Go simplicity and performance is a natural fit for serverless functions and container based applications 
+* Go seems to be a good replacement for Python which is also commonly used by Platform Enfgineers
+* Go is a very eco friendly language (execution time, cpu load, memory consumtpion) while still beeing simple
+* Go's ecosystem is developer friendly and the built in dependency management is a dream 
+* I was used to CodePipeline and CodeBuild for a long time and V2 is a huge improvement but GitLab CI or GitHub Actions seem to be much simpler and less IaC heavy which is big plus for many developers/orgs (but I am fine with it)
+* CodeBuild and CodePipeline can be good if a platform library or automation os provided to reduce the cogntive load for the teams otherwise the alternatives of GitLab and GitHub are just outright better in my opinion
+* For alerting I would prefer DataDog as I am used to it professionally but CloudWatch can be good/made easy with [cdk-watchful](https://github.com/cdklabs/cdk-watchful/tree/main) but I did not add it to this sample lambda project
 
 ## AWS Infrastructure
 
