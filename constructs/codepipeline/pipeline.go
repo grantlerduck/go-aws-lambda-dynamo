@@ -69,7 +69,7 @@ func NewGoV2MainPipeline(scope constructs.Construct, id string, props GoPipeline
 		Commands:    nil,
 	})
 	testWave.AddPost(lintStep, testStep)
-
+	
 	if len(props.Stages) > 0 {
 		deployWave := mainPipeline.AddWave(jsii.String("Deploy"), nil)
 		for _, stage := range props.Stages {
@@ -120,11 +120,13 @@ func NewGoV2BranchPipeline(scope constructs.Construct, id string, props GoPipeli
 	})
 	testWave.AddPost(lintStep, testStep)
 	branchPipeline.BuildPipeline()
-	addPRTrigger(branchPipeline)
+	addBranchTrigger(branchPipeline)
 	return branchPipeline
 }
 
-func addPRTrigger(pipeline pipelines.CodePipeline) {
+// adds a branch based trigger to the pipeline referencing the source action
+// workaround since aws cdk does not yet support push triggers 
+func addBranchTrigger(pipeline pipelines.CodePipeline) {
 	sourceStage := pipeline.Pipeline().Stage(jsii.String("Source"))
 	actions := sourceStage.Actions()
 	branches := &[]*string{
@@ -140,14 +142,6 @@ func addPRTrigger(pipeline pipelines.CodePipeline) {
 		acts := (*actions)
 		if len(acts) > 0 {
 			sourceAction := acts[0]
-			// pipeline.Pipeline().AddTrigger(&awscodepipeline.TriggerProps{
-			// 	ProviderType: awscodepipeline.ProviderType_CODE_STAR_SOURCE_CONNECTION,
-			// 	GitConfiguration: &awscodepipeline.GitConfiguration{
-			// 		SourceAction: sourceAction,
-			// 		PushFilter: &[]*awscodepipeline.GitPushFilter{{TagsIncludes: branches,},
-			// 		},
-			// 	},
-			// })
 			includes := &map[string]*[]*string{"Includes": branches}
 			branchConfig := &[]map[string]any{{"Branches": includes}}
 			override := &[]any{

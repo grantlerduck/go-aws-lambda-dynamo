@@ -2,7 +2,9 @@ package booking
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"errors"
+	"os"
 	"time"
 
 	"github.com/google/uuid"
@@ -18,7 +20,7 @@ var _ = Describe("Given booking service", func() {
 	service := EventProcessor{&MockBookingRepo{}, logger}
 	When("payload valid message", func() {
 		When("and service unmarshalls and validates message", func() {
-			It("repository does not returns error on insert", func() {
+			It("repository does not return error on insert", func() {
 				evntPb := bookingpb.Event{
 					BookingId:       uuid.New().String(),
 					UserId:          uuid.New().String(),
@@ -34,6 +36,10 @@ var _ = Describe("Given booking service", func() {
 				Expect(marshalErr).ShouldNot(HaveOccurred())
 				eventPayload := base64.StdEncoding.EncodeToString(bytes)
 				evntMsg := EventMessage{Key: uuid.New().String(), Tenant: "eu", Origin: "marketplace", Payload: eventPayload}
+				// persist json for testin pruposes
+				eventJson, _ := json.Marshal(evntMsg)
+    			fileErr := os.WriteFile("../../../../event.json", eventJson, 0644)
+				Expect(fileErr).ShouldNot(HaveOccurred())
 				_, err := service.Process(&evntMsg) // the return value is mocked from the repo
 				Expect(err).ShouldNot(HaveOccurred())
 			})
@@ -41,7 +47,7 @@ var _ = Describe("Given booking service", func() {
 		When("and service unmarshalls and validates message", func() {
 			logger, _ := zap.NewDevelopment()
 			service := EventProcessor{&MockBookingFailRepo{}, logger}
-			It("repository does returns error on insert", func() {
+			It("repository does return error on insert", func() {
 				
 				evntPb := bookingpb.Event{
 					BookingId:       uuid.New().String(),

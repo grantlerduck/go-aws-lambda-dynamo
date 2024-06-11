@@ -19,9 +19,38 @@ However, it is a nice practice to get the concepts.
 Background: I am mainly a Kotlin/Spring Developer and AWS Cloud Architect with a DataSceince backround.
 Hence, you will find javaish or pythonish patterns in the code. It has hard to get rid of habbits :D
 
-# AWS Infrastructure
+## AWS Infrastructure
 
-Coming Soon
+Deployed AWS infrastructure using cdk-dia for auto-generating the diagram.
+For CICD this sample project uses AWS CodeBuild and CodePipeline using a CodeStarConnection for github.
+The pipeline stack contains two pipelines, one for the main branch with execution mode queued and on for specified branches (dev*, feat/* , chore/* , bug/*). 
+The pipelines are CodePipelineV2 in order to utilize the new featuers such as branch pipelines, and the different execution modes.  
+The stack in this sample assumes a bas setup where the CodeStar connection is available as a stack export to be imported.
+
+![alt text](diagram.png)
+
+### Install CDK-DIA
+
+Globally install cdk-dia 
+```
+npm install cdk-dia -g
+```
+
+Make sure graphviz is installed
+```
+brew install graphviz
+```
+
+Synthesize CDK app
+```
+cdk synth
+```
+
+Generate CDK-DIA diagram as PNG
+```
+npx cdk-dia
+```
+
 
 
 ## Setup
@@ -47,7 +76,7 @@ For the integration tests testcontainers is used to easily automate the containe
 
 To execute all tests and reports simply run the test script to execute linting and test execution with reportsTo run
 ```bash
-./test.sh
+./test-local.sh
 ```
 
 run unit tests with junit test report and coverage.html report
