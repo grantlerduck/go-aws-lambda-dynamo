@@ -12,8 +12,8 @@ type DataStackProps struct {
 }
 
 type DataStackOutPuts struct {
-	Stack cdk.Stack
-	BookingEventsTabel awsdynamodb.Table
+	Stack              cdk.Stack
+	BookingEventsTable awsdynamodb.Table
 }
 
 func NewDataStack(scope constructs.Construct, id string, props *DataStackProps) DataStackOutPuts {
@@ -23,20 +23,20 @@ func NewDataStack(scope constructs.Construct, id string, props *DataStackProps) 
 	}
 	stack := cdk.NewStack(scope, &id, &sprops)
 	bookingEventsTable := awsdynamodb.NewTable(stack, jsii.String("BookingEventsTable"), &awsdynamodb.TableProps{
-		PartitionKey: &awsdynamodb.Attribute{Name: jsii.String("pk"), Type: awsdynamodb.AttributeType_STRING},
-		SortKey: &awsdynamodb.Attribute{Name: jsii.String("sk"), Type: awsdynamodb.AttributeType_STRING},
-		BillingMode: awsdynamodb.BillingMode_PROVISIONED,
-		ReadCapacity: jsii.Number(5), // default value
-		WriteCapacity: jsii.Number(5), // default value
+		PartitionKey:  &awsdynamodb.Attribute{Name: jsii.String("pk"), Type: awsdynamodb.AttributeType_STRING},
+		SortKey:       &awsdynamodb.Attribute{Name: jsii.String("sk"), Type: awsdynamodb.AttributeType_STRING},
+		BillingMode:   awsdynamodb.BillingMode_PROVISIONED,
+		ReadCapacity:  jsii.Number(5),            // default value
+		WriteCapacity: jsii.Number(5),            // default value
 		RemovalPolicy: cdk.RemovalPolicy_DESTROY, // don't do that in production
 	})
 	bookingEventsTable.AddGlobalSecondaryIndex(&awsdynamodb.GlobalSecondaryIndexProps{
-		IndexName: jsii.String("GSI1"),
-		PartitionKey: &awsdynamodb.Attribute{Name: jsii.String("gsi1_pk"), Type: awsdynamodb.AttributeType_STRING},
+		IndexName:      jsii.String("GSI1"),
+		PartitionKey:   &awsdynamodb.Attribute{Name: jsii.String("gsi1_pk"), Type: awsdynamodb.AttributeType_STRING},
 		ProjectionType: awsdynamodb.ProjectionType_ALL,
-		ReadCapacity: jsii.Number(5), // default value
-		WriteCapacity: jsii.Number(5), // default value
+		ReadCapacity:   jsii.Number(5), // default value
+		WriteCapacity:  jsii.Number(5), // default value
 	})
 
-	return DataStackOutPuts{Stack: stack, BookingEventsTabel: bookingEventsTable}
+	return DataStackOutPuts{Stack: stack, BookingEventsTable: bookingEventsTable}
 }
