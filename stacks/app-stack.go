@@ -2,6 +2,7 @@ package stacks
 
 import (
 	cdk "github.com/aws/aws-cdk-go/awscdk/v2"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awsdynamodb"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslogs"
 	"github.com/aws/aws-cdk-go/awscdklambdagoalpha/v2"
@@ -13,15 +14,15 @@ func NewBookingEventsLambdaStage(scope constructs.Construct, props cdk.StackProp
 	stage := cdk.NewStage(scope, jsii.String("booking-event"), nil)
 	dataStackOutputs := NewDataStack(stage, "data-stack", &DataStackProps{props})
 	NewAppStack(stage, "app-lambda-stack", &AppStackProps{
-		StackProps: props, 
-		BookingEventsTableName: dataStackOutputs.BookingEventsTabel.TableName(),
+		StackProps:         props,
+		BookingEventsTable: dataStackOutputs.BookingEventsTable,
 	})
 	return stage
 }
 
 type AppStackProps struct {
-	StackProps             cdk.StackProps
-	BookingEventsTableName *string
+	StackProps         cdk.StackProps
+	BookingEventsTable awsdynamodb.Table
 }
 
 func NewAppStack(scope constructs.Construct, id string, props *AppStackProps) cdk.Stack {
@@ -31,19 +32,20 @@ func NewAppStack(scope constructs.Construct, id string, props *AppStackProps) cd
 	}
 	stack := cdk.NewStack(scope, &id, &sprops)
 
-	awscdklambdagoalpha.NewGoFunction(
+	lambda := awscdklambdagoalpha.NewGoFunction(
 		stack,
 		jsii.String("BookingProcessorLambda"),
 		&awscdklambdagoalpha.GoFunctionProps{
 			Architecture: awslambda.Architecture_ARM_64(),
 			LogRetention: awslogs.RetentionDays_ONE_DAY,
 			Entry:        jsii.String("lambdas/booking-handler"),
-			MemorySize:   jsii.Number(640), // (128*5=640), more memory means more available bandwidth which is beneficial for read/write to s3
+			MemorySize:   jsii.Number(128),
 			Timeout:      cdk.Duration_Seconds(jsii.Number(10)),
 			Environment: &map[string]*string{
-				"DYNAMO_BOOKING_TABLE_NAME": props.BookingEventsTableName,
+				"DYNAMO_BOOKING_TABLE_NAME": props.BookingEventsTable.TableName(),
 			},
 		},
 	)
+	props.BookingEventsTable.GrantReadWriteData(lambda)
 	return stack
 }
