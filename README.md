@@ -1,7 +1,7 @@
 # go-aws-lambda-dynamo
 
 AWS Lambda function using Go and DynamoDB.
-The lambda is implemented in hexagonal architecture (a slight overkill for such a small functions).
+The lambda is implemented in hexagonal architecture (a slight overkill for such a small function).
 
 Rough functinality & scenario:
 * The lambda receives a travel booking event as a message with bas64 encoded payload
@@ -17,7 +17,7 @@ This scenario is not particular useful nor fully-real world.
 However, it is a nice practice to get the concepts.
 
 Background: I am mainly a Kotlin/Spring Developer and AWS Cloud Architect with a DataSceince backround.
-Hence, you will find javaish or pythonish patterns in the code. It has hard to get rid of habbits :D
+Hence, you will find javaish or pythonish patterns in the code. It is hard to get rid of habbits :D
 
 ## AWS Infrastructure
 
